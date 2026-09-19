@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────
+   CUSTOM PROPERTIES
+───────────────────────────────────────────────────────── */
+:root {
+  --font-inter: "Inter", system-ui, sans-serif;
+  --color-background: #0f172a;
+  --color-surface: #1e293b;
+  --color-border: rgba(148, 163, 184, 0.15);
+}
+
+/* ─────────────────────────────────────────────────────────
+   BASE RESETS
+───────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+  height: -webkit-fill-available;
+}
+
+body {
+  height: 100%;
+  height: -webkit-fill-available;
+  background: var(--color-background);
+  color: #f1f5f9;
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+}
+
+/* ─────────────────────────────────────────────────────────
+   SAFE AREA UTILITIES (iPhone notch / home bar)
+───────────────────────────────────────────────────────── */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ─────────────────────────────────────────────────────────
+   LEAFLET MAP OVERRIDES
+───────────────────────────────────────────────────────── */
+
+/* Ensure map canvas fills parent */
+.leaflet-container {
+  width: 100% !important;
+  height: 100% !important;
+  background: #0f172a;
+  font-family: var(--font-inter);
+}
+
+/* 
+ * Dark map tiles — zero API key approach.
+ * Inverts the standard OSM tiles and rotates hue to produce
+ * a genuine dark-mode map without any tile provider dependency.
+ * Markers (in the marker pane) are excluded from this filter.
+ */
+.leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(90%) contrast(90%) saturate(0.8);
+}
+
+/* Hide default Leaflet zoom controls (we use custom ones) */
+.leaflet-control-zoom {
+  display: none !important;
+}
+
+/* Attribution — minimal, dark */
+.leaflet-control-attribution {
+  background: rgba(15, 23, 42, 0.75) !important;
+  color: #475569 !important;
+  font-size: 9px !important;
+  border-radius: 6px 0 0 0 !important;
+  backdrop-filter: blur(4px);
+  padding: 2px 6px !important;
+}
+
+.leaflet-control-attribution a {
+  color: #64748b !important;
+}
+
+/* Marker hover animation */
+.lead-marker:hover {
+  transform: rotate(-45deg) scale(1.15) !important;
+}
+
+/* Cluster group transitions */
+.leaflet-marker-icon {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+/* ─────────────────────────────────────────────────────────
+   VAUL DRAWER OVERRIDES
+───────────────────────────────────────────────────────── */
+[vaul-drawer] {
+  touch-action: pan-y;
+}
+
+[vaul-drawer-content] {
+  /* Override any browser-default scrollbar styling */
+  scrollbar-width: thin;
+  scrollbar-color: #334155 transparent;
+}
+
+[vaul-drawer-content]::-webkit-scrollbar {
+  width: 4px;
+}
+
+[vaul-drawer-content]::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[vaul-drawer-content]::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────
+   UTILITY: HIDE SCROLLBAR
+───────────────────────────────────────────────────────── */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─────────────────────────────────────────────────────────
+   INPUT AUTOFILL DARK THEME
+───────────────────────────────────────────────────────── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #1e293b inset !important;
+  -webkit-text-fill-color: #e2e8f0 !important;
+  caret-color: #e2e8f0;
+}
+
+/* ─────────────────────────────────────────────────────────
+   FONT UTILITY
+───────────────────────────────────────────────────────── */
+.font-inter {
+  font-family: var(--font-inter);
+}

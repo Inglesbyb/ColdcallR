@@ -1,0 +1,802 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "--config=playwright.config.ts"
+    ],
+    "configFile": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\playwright.config.ts",
+    "rootDir": "C:/Users/Eggwi/.gemini/antigravity-ide/scratch/liverpool-securemap/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Eggwi/.gemini/antigravity-ide/scratch/liverpool-securemap/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/Eggwi/.gemini/antigravity-ide/scratch/liverpool-securemap/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 45000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "e2e/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 8,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "securemap.spec.ts",
+      "file": "securemap.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Journey A — Root Navigation & Redirects",
+          "file": "securemap.spec.ts",
+          "line": 34,
+          "column": 6,
+          "specs": [
+            {
+              "title": "A1: / redirects to /list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 406,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:07:42.719Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-1038f511caeb6674367f",
+              "file": "securemap.spec.ts",
+              "line": 35,
+              "column": 7
+            },
+            {
+              "title": "A2: Leads tab is active on /list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1501,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:07:43.250Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-72eacb7e38dd1d328d68",
+              "file": "securemap.spec.ts",
+              "line": 43,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Journey B — List View, Sorting & Filters",
+          "file": "securemap.spec.ts",
+          "line": 60,
+          "column": 6,
+          "specs": [
+            {
+              "title": "B1: Core list UI elements render",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 9367,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:07:44.761Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-1fb47569c9e7ca390827",
+              "file": "securemap.spec.ts",
+              "line": 61,
+              "column": 7
+            },
+            {
+              "title": "B2: 'Most Burglaries' sort updates URL and reorders list",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1681,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[B2] API latencies (ms): -1.177, -301.315, -1.242\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:07:54.147Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-81b584c738123182094f",
+              "file": "securemap.spec.ts",
+              "line": 86,
+              "column": 7
+            },
+            {
+              "title": "B3: Plot on Map FAB navigates with active params",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1388,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:07:55.844Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-d9ac9da48a292d9e4f8a",
+              "file": "securemap.spec.ts",
+              "line": 115,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Journey C — Map Rendering & LeadDrawer",
+          "file": "securemap.spec.ts",
+          "line": 136,
+          "column": 6,
+          "specs": [
+            {
+              "title": "C1: Map loads and Leaflet container renders",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3244,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:07:57.243Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-93c637658995b77cbe1f",
+              "file": "securemap.spec.ts",
+              "line": 137,
+              "column": 7
+            },
+            {
+              "title": "C2: Clicking a marker opens the LeadDrawer",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 13678,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i })) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i })) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\u001b[22m\n\n    at C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts:185:26",
+                        "location": {
+                          "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                          "column": 26,
+                          "line": 185
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 183 |\u001b[39m       page\u001b[33m.\u001b[39mlocator(\u001b[32m\".fixed.inset-0, .fixed.bottom-0\"\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[35m/navigate|score|burglari/i\u001b[39m })\n \u001b[90m 184 |\u001b[39m     )\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 185 |\u001b[39m     \u001b[36mawait\u001b[39m expect(drawer)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10\u001b[39m_000 })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 186 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 187 |\u001b[39m\n \u001b[90m 188 |\u001b[39m   test(\u001b[32m\"C3: LeadDrawer shows company data and Navigate button\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                            "column": 26,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i })) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\u001b[22m\n\n\n  183 |       page.locator(\".fixed.inset-0, .fixed.bottom-0\").filter({ hasText: /navigate|score|burglari/i })\n  184 |     );\n> 185 |     await expect(drawer).toBeVisible({ timeout: 10_000 });\n      |                          ^\n  186 |   });\n  187 |\n  188 |   test(\"C3: LeadDrawer shows company data and Navigate button\", async ({ page }) => {\n    at C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts:185:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:08:00.518Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\test-results\\securemap-Journey-C-—-Map--33cc3-marker-opens-the-LeadDrawer-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                        "column": 26,
+                        "line": 185
+                      }
+                    },
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 13601,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i })) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i })) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\u001b[22m\n\n    at C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts:185:26",
+                        "location": {
+                          "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                          "column": 26,
+                          "line": 185
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 183 |\u001b[39m       page\u001b[33m.\u001b[39mlocator(\u001b[32m\".fixed.inset-0, .fixed.bottom-0\"\u001b[39m)\u001b[33m.\u001b[39mfilter({ hasText\u001b[33m:\u001b[39m \u001b[35m/navigate|score|burglari/i\u001b[39m })\n \u001b[90m 184 |\u001b[39m     )\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 185 |\u001b[39m     \u001b[36mawait\u001b[39m expect(drawer)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10\u001b[39m_000 })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 186 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 187 |\u001b[39m\n \u001b[90m 188 |\u001b[39m   test(\u001b[32m\"C3: LeadDrawer shows company data and Navigate button\"\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                            "column": 26,
+                            "line": 185
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i })) with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for locator('[role=\"dialog\"], [data-vaul-drawer]').or(locator('.fixed.inset-0, .fixed.bottom-0').filter({ hasText: /navigate|score|burglari/i }))\u001b[22m\n\n\n  183 |       page.locator(\".fixed.inset-0, .fixed.bottom-0\").filter({ hasText: /navigate|score|burglari/i })\n  184 |     );\n> 185 |     await expect(drawer).toBeVisible({ timeout: 10_000 });\n      |                          ^\n  186 |   });\n  187 |\n  188 |   test(\"C3: LeadDrawer shows company data and Navigate button\", async ({ page }) => {\n    at C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts:185:26"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-09T16:08:16.604Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\test-results\\securemap-Journey-C-—-Map--33cc3-marker-opens-the-LeadDrawer-chromium-retry1\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                        "column": 26,
+                        "line": 185
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-5aab0c18374d81dd6a48",
+              "file": "securemap.spec.ts",
+              "line": 150,
+              "column": 7
+            },
+            {
+              "title": "C3: LeadDrawer shows company data and Navigate button",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 14283,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first() with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first() with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\u001b[22m\n\n    at C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts:218:31",
+                        "location": {
+                          "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                          "column": 31,
+                          "line": 218
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 216 |\u001b[39m       page\u001b[33m.\u001b[39mlocator(\u001b[32m'a[href*=\"maps/dir\"]'\u001b[39m)\n \u001b[90m 217 |\u001b[39m     )\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 218 |\u001b[39m     \u001b[36mawait\u001b[39m expect(navigateBtn)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10\u001b[39m_000 })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 219 |\u001b[39m\n \u001b[90m 220 |\u001b[39m     \u001b[36mconst\u001b[39m href \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m navigateBtn\u001b[33m.\u001b[39mgetAttribute(\u001b[32m\"href\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 221 |\u001b[39m     expect(href)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/google\\.com\\/maps/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                            "column": 31,
+                            "line": 218
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first() with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\u001b[22m\n\n\n  216 |       page.locator('a[href*=\"maps/dir\"]')\n  217 |     ).first();\n> 218 |     await expect(navigateBtn).toBeVisible({ timeout: 10_000 });\n      |                               ^\n  219 |\n  220 |     const href = await navigateBtn.getAttribute(\"href\");\n  221 |     expect(href).toMatch(/google\\.com\\/maps/);\n    at C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts:218:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:08:32.753Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\test-results\\securemap-Journey-C-—-Map--cd5dd-ny-data-and-Navigate-button-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                        "column": 31,
+                        "line": 218
+                      }
+                    },
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 14269,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first() with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first() with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\u001b[22m\n\n    at C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts:218:31",
+                        "location": {
+                          "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                          "column": 31,
+                          "line": 218
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 216 |\u001b[39m       page\u001b[33m.\u001b[39mlocator(\u001b[32m'a[href*=\"maps/dir\"]'\u001b[39m)\n \u001b[90m 217 |\u001b[39m     )\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 218 |\u001b[39m     \u001b[36mawait\u001b[39m expect(navigateBtn)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10\u001b[39m_000 })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                               \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 219 |\u001b[39m\n \u001b[90m 220 |\u001b[39m     \u001b[36mconst\u001b[39m href \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m navigateBtn\u001b[33m.\u001b[39mgetAttribute(\u001b[32m\"href\"\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 221 |\u001b[39m     expect(href)\u001b[33m.\u001b[39mtoMatch(\u001b[35m/google\\.com\\/maps/\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                            "column": 31,
+                            "line": 218
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\nExpected: visible\nTimeout: 10000ms\nError: element(s) not found\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first() with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('link', { name: 'Navigate', exact: true }).or(locator('a[href*=\"maps/dir\"]')).first()\u001b[22m\n\n\n  216 |       page.locator('a[href*=\"maps/dir\"]')\n  217 |     ).first();\n> 218 |     await expect(navigateBtn).toBeVisible({ timeout: 10_000 });\n      |                               ^\n  219 |\n  220 |     const href = await navigateBtn.getAttribute(\"href\");\n  221 |     expect(href).toMatch(/google\\.com\\/maps/);\n    at C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts:218:31"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-09-09T16:08:49.633Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\test-results\\securemap-Journey-C-—-Map--cd5dd-ny-data-and-Navigate-button-chromium-retry1\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\Eggwi\\.gemini\\antigravity-ide\\scratch\\liverpool-securemap\\e2e\\securemap.spec.ts",
+                        "column": 31,
+                        "line": 218
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-384a1d4a71f136b09196",
+              "file": "securemap.spec.ts",
+              "line": 188,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Journey D — BottomNav & Today View",
+          "file": "securemap.spec.ts",
+          "line": 229,
+          "column": 6,
+          "specs": [
+            {
+              "title": "D1: Today tab navigates and renders without 404",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1503,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:09:06.439Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-0e94d69854ff4800f58a",
+              "file": "securemap.spec.ts",
+              "line": 230,
+              "column": 7
+            },
+            {
+              "title": "D2: Leads tab returns to /list with active state",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 982,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:09:08.065Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-7b4138f2aecbc281f302",
+              "file": "securemap.spec.ts",
+              "line": 247,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Journey E — Console & Network Health",
+          "file": "securemap.spec.ts",
+          "line": 262,
+          "column": 6,
+          "specs": [
+            {
+              "title": "E1: Zero JS errors on /list load",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2399,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:09:09.057Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-9685c8196bf39e850a38",
+              "file": "securemap.spec.ts",
+              "line": 263,
+              "column": 7
+            },
+            {
+              "title": "E2: Zero hydration errors on /map load",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2953,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:09:11.481Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-8b0eaa6a853b1c014b86",
+              "file": "securemap.spec.ts",
+              "line": 291,
+              "column": 7
+            },
+            {
+              "title": "E3: /api/leads returns 200 with correct shape",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 327,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[E3] Total leads in DB: 77000\n"
+                        },
+                        {
+                          "text": "[E3] Sample lead: AGORA LIVERPOOL LTD | score=100 | tag=HIGH_CRIME_ZONE\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:09:14.470Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-0036bf8b598e9d9b1fb2",
+              "file": "securemap.spec.ts",
+              "line": 310,
+              "column": 7
+            },
+            {
+              "title": "E4: sort_by=burglaries returns higher burglary counts first",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 281,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[E4] Top 5 burglary counts: 81, 21, 17, 9, 9\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:09:14.824Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-c9e3c128d383bd872eca",
+              "file": "securemap.spec.ts",
+              "line": 336,
+              "column": 7
+            },
+            {
+              "title": "E5: risk_tags filter returns only matching risk_profile_tag records",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 45000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 440,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[E5] HIGH_CRIME_ZONE + ELEVATED_CRIME total: 1836\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-09-09T16:09:15.134Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "73e4dcc870f828c30ba8-566d5c982e841ec96c07",
+              "file": "securemap.spec.ts",
+              "line": 355,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-09-09T16:07:42.116Z",
+    "duration": 94422.746,
+    "expected": 13,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}
