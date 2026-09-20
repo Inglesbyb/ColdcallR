@@ -3,6 +3,9 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import { bulkLookupPostcodes } from '../lib/api/postcodes.js';
+import { getCrimeCountAtLocation, type CrimeCounts } from '../lib/api/crime.js';
+import { scoreLead, getSicDescription } from '../lib/scoring.js';
 
 // Setup environment variables
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -164,24 +167,35 @@ async function run() {
 
         const geocodeMap = await geocodePostcodes(postcodesToGeocode);
 
-        const recordsToUpsert = validItems.map((item: any) => {
+        const recordsToUpsert = await Promise.all(validItems.map(async (item: any) => {
           const address = item.registered_office_address || {};
           const postcode = address.postal_code || "";
           const coords = geocodeMap[postcode];
 
+          let crimeData: CrimeCounts = {
+            total: 0, burglary: 0, robbery: 0, vehicle: 0, theftPerson: 0,
+            otherTheft: 0, arson: 0, shoplifting: 0, asb: 0, violent: 0
+          };
+          if (coords?.lat && coords?.lng) {
+            try {
+              crimeData = await getCrimeCountAtLocation(coords.lat, coords.lng);
+            } catch {
+              // Ignore crime failure on ingest
+            }
+          }
+
           const incDate = new Date(item.date_of_creation).toISOString();
           const sicCodes = item.sic_codes || [];
+          const sicDescription = getSicDescription(sicCodes);
 
-          let riskTag = "DEFAULT";
-          if (sicCodes.includes("47110") || sicCodes.includes("47190") || sicCodes.includes("47210")) {
-             riskTag = "PREMIUM_RETAIL";
-          } else if (sicCodes.includes("45111") || sicCodes.includes("45200") || sicCodes.includes("47300")) {
-             riskTag = "AUTOMOTIVE";
-          } else if (sicCodes.includes("52100") || sicCodes.includes("49410") || sicCodes.includes("47410")) {
-             riskTag = "INDUSTRIAL_TARGET";
-          } else if (sicCodes.includes("55100") || sicCodes.includes("56101") || sicCodes.includes("56301")) {
-             riskTag = "HOSPITALITY";
-          }
+          const scoring = scoreLead({
+            company_status: item.company_status,
+            sic_codes: sicCodes,
+            incorporation_date: incDate,
+            recent_burglaries_count: crimeData.total,
+            is_commercial_unit: true,
+            visit_status: 'unvisited'
+          });
 
           return {
             company_number: item.company_number,
@@ -189,16 +203,28 @@ async function run() {
             company_status: item.company_status,
             incorporation_date: incDate,
             sic_codes: sicCodes,
+            sic_description: sicDescription,
             address_line_1: address.address_line_1 || "",
             postcode: postcode,
             lat: coords?.lat || null,
             lng: coords?.lng || null,
-            risk_profile_tag: riskTag,
-            lead_score: 50,
+            lead_score: scoring.lead_score,
+            risk_profile_tag: scoring.risk_profile_tag,
+            sales_hook: scoring.sales_hook,
+            recent_burglaries_count: crimeData.total,
+            crime_burglary_count: crimeData.burglary,
+            crime_robbery_count: crimeData.robbery,
+            crime_vehicle_count: crimeData.vehicle,
+            crime_theft_person_count: crimeData.theftPerson,
+            crime_other_theft_count: crimeData.otherTheft,
+            crime_arson_count: crimeData.arson,
+            crime_shoplifting_count: crimeData.shoplifting,
+            crime_asb_count: crimeData.asb,
+            crime_violent_count: crimeData.violent,
             visit_status: 'unvisited',
             visited: false
           };
-        });
+        }));
 
         // Safe Insert: Check for existing company_numbers first to avoid missing unique constraint errors
         const companyNumbers = recordsToUpsert.map(r => r.company_number);

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase/server";
 import { fetchLiverpoolLeads } from "@/lib/api/companiesHouse";
 import { bulkLookupPostcodes } from "@/lib/api/postcodes";
-import { getCrimeCountAtLocation } from "@/lib/api/crime";
+import { getCrimeCountAtLocation, type CrimeCounts } from "@/lib/api/crime";
 import { scoreLead, getSicDescription } from "@/lib/scoring";
 import type { CHCompany } from "@/lib/types";
 
@@ -81,9 +81,12 @@ export async function GET(request: NextRequest) {
     const lng = geo.longitude;
 
     // Crime enrichment (skip if requested for speed)
-    let recentBurglaries = 0;
+    let crimeData: CrimeCounts = {
+      total: 0, burglary: 0, robbery: 0, vehicle: 0, theftPerson: 0,
+      otherTheft: 0, arson: 0, shoplifting: 0, asb: 0, violent: 0
+    };
     if (!skipCrime) {
-      recentBurglaries = await getCrimeCountAtLocation(lat, lng);
+      crimeData = await getCrimeCountAtLocation(lat, lng);
     }
 
     // Score this lead
@@ -92,7 +95,7 @@ export async function GET(request: NextRequest) {
       incorporation_date: company.date_of_creation,
       company_status: company.company_status,
       is_commercial_unit: true, // Assume commercial for CH-registered businesses
-      recent_burglaries_count: recentBurglaries,
+      recent_burglaries_count: crimeData.total,
       visit_status: "unvisited",
     });
 
@@ -119,7 +122,16 @@ export async function GET(request: NextRequest) {
         lead_score: scoring.lead_score,
         risk_profile_tag: scoring.risk_profile_tag,
         sales_hook: scoring.sales_hook,
-        recent_burglaries_count: recentBurglaries,
+        recent_burglaries_count: crimeData.total,
+        crime_burglary_count: crimeData.burglary,
+        crime_robbery_count: crimeData.robbery,
+        crime_vehicle_count: crimeData.vehicle,
+        crime_theft_person_count: crimeData.theftPerson,
+        crime_other_theft_count: crimeData.otherTheft,
+        crime_arson_count: crimeData.arson,
+        crime_shoplifting_count: crimeData.shoplifting,
+        crime_asb_count: crimeData.asb,
+        crime_violent_count: crimeData.violent,
         visit_status: "unvisited",
         visited: false,
       },

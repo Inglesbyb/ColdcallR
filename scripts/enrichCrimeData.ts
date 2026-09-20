@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { getCrimeCountAtLocation } from '../lib/api/crime.js';
+import { getCrimeCountAtLocation, type CrimeCounts } from '../lib/api/crime.js';
 import { scoreLead } from '../lib/scoring.js';
 
 // Need to load environment variables from Next.js context
@@ -24,12 +24,12 @@ async function sleep(ms: number) {
 }
 
 // Custom retry wrapper for getCrimeCountAtLocation since it suppresses errors
-async function fetchCrimeWithRetry(lat: number, lng: number): Promise<number> {
+async function fetchCrimeWithRetry(lat: number, lng: number): Promise<CrimeCounts> {
   // getCrimeCountAtLocation handles its own retries/suppression, returning 0 on failure.
   // We'll just call it, but add a 150ms delay.
-  const count = await getCrimeCountAtLocation(lat, lng);
+  const counts = await getCrimeCountAtLocation(lat, lng);
   await sleep(150);
-  return count;
+  return counts;
 }
 
 async function run() {
@@ -96,7 +96,7 @@ async function run() {
     const avgLng = data.lngSum / data.count;
 
     // Fetch crime for the centroid
-    const recentBurglaries = await fetchCrimeWithRetry(avgLat, avgLng);
+    const crimeData = await fetchCrimeWithRetry(avgLat, avgLng);
 
     // Calculate score for each lead and prepare bulk update
     const updates = data.leads.map(lead => {
@@ -105,7 +105,7 @@ async function run() {
         incorporation_date: lead.incorporation_date,
         company_status: lead.company_status,
         is_commercial_unit: lead.is_commercial_unit,
-        recent_burglaries_count: recentBurglaries,
+        recent_burglaries_count: crimeData.total,
         visit_status: lead.visit_status,
       });
 
@@ -117,7 +117,16 @@ async function run() {
 
       return {
         ...lead,
-        recent_burglaries_count: recentBurglaries,
+        recent_burglaries_count: crimeData.total,
+        crime_burglary_count: crimeData.burglary,
+        crime_robbery_count: crimeData.robbery,
+        crime_vehicle_count: crimeData.vehicle,
+        crime_theft_person_count: crimeData.theftPerson,
+        crime_other_theft_count: crimeData.otherTheft,
+        crime_arson_count: crimeData.arson,
+        crime_shoplifting_count: crimeData.shoplifting,
+        crime_asb_count: crimeData.asb,
+        crime_violent_count: crimeData.violent,
         lead_score: scoring.lead_score,
         risk_profile_tag: scoring.risk_profile_tag,
         sales_hook: scoring.sales_hook
@@ -140,7 +149,7 @@ async function run() {
 
     updatedLeads += updates.length;
     processedSectors++;
-    console.log(`[Sector ${sector}] ${recentBurglaries} burglaries -> Updated ${updates.length} leads. Progress: ${processedSectors}/${sectors.size}`);
+    console.log(`[Sector ${sector}] ${crimeData.total} crimes -> Updated ${updates.length} leads. Progress: ${processedSectors}/${sectors.size}`);
   }
 
   console.log(`\n=== CRIME ENRICHMENT COMPLETE ===`);

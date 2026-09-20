@@ -12,7 +12,37 @@ const TARGET_CATEGORIES = [
   "vehicle-crime",
   "theft-from-the-person",
   "other-theft",
+  "criminal-damage-arson",
+  "shoplifting",
+  "anti-social-behaviour",
+  "violent-crime"
 ];
+
+export interface CrimeCounts {
+  total: number;
+  burglary: number;
+  robbery: number;
+  vehicle: number;
+  theftPerson: number;
+  otherTheft: number;
+  arson: number;
+  shoplifting: number;
+  asb: number;
+  violent: number;
+}
+
+const emptyCounts = (): CrimeCounts => ({
+  total: 0,
+  burglary: 0,
+  robbery: 0,
+  vehicle: 0,
+  theftPerson: 0,
+  otherTheft: 0,
+  arson: 0,
+  shoplifting: 0,
+  asb: 0,
+  violent: 0,
+});
 
 /**
  * Fetch street-level crimes within a radius of a lat/lng point.
@@ -23,7 +53,7 @@ export async function getNearbyCrimeCount(
   lat: number,
   lng: number,
   radiusMeters = 400
-): Promise<number> {
+): Promise<CrimeCounts> {
   // data.police.uk uses a polygon for radius queries
   // Approximate a circle as a square bounding box (simplified for performance)
   const radiusDeg = radiusMeters / 111_320; // rough metres → degrees
@@ -31,7 +61,7 @@ export async function getNearbyCrimeCount(
   const poly = buildPolygon(lat, lng, radiusDeg);
   const months = getLast12Months();
 
-  let totalCount = 0;
+  let counts = emptyCounts();
 
   // Query one month at a time (API limit: one date param per request)
   for (const month of months.slice(0, 12)) {
@@ -46,10 +76,20 @@ export async function getNearbyCrimeCount(
       if (!res.ok) continue;
 
       const crimes: CrimeRecord[] = await res.json();
-      const relevant = crimes.filter((c) =>
-        TARGET_CATEGORIES.includes(c.category)
-      );
-      totalCount += relevant.length;
+      
+      for (const c of crimes) {
+        if (!TARGET_CATEGORIES.includes(c.category)) continue;
+        counts.total++;
+        if (c.category === "burglary") counts.burglary++;
+        else if (c.category === "robbery") counts.robbery++;
+        else if (c.category === "vehicle-crime") counts.vehicle++;
+        else if (c.category === "theft-from-the-person") counts.theftPerson++;
+        else if (c.category === "other-theft") counts.otherTheft++;
+        else if (c.category === "criminal-damage-arson") counts.arson++;
+        else if (c.category === "shoplifting") counts.shoplifting++;
+        else if (c.category === "anti-social-behaviour") counts.asb++;
+        else if (c.category === "violent-crime") counts.violent++;
+      }
 
       // Respect rate limits
       await new Promise((r) => setTimeout(r, 150));
@@ -59,7 +99,7 @@ export async function getNearbyCrimeCount(
     }
   }
 
-  return totalCount;
+  return counts;
 }
 
 /**
@@ -69,10 +109,10 @@ export async function getNearbyCrimeCount(
 export async function getCrimeCountAtLocation(
   lat: number,
   lng: number
-): Promise<number> {
+): Promise<CrimeCounts> {
   try {
     const months = getLast12Months();
-    let count = 0;
+    let counts = emptyCounts();
 
     // Query full 12 months for comprehensive data
     for (const month of months.slice(0, 12)) {
@@ -90,14 +130,26 @@ export async function getCrimeCountAtLocation(
       if (!res.ok) continue;
 
       const crimes: CrimeRecord[] = await res.json();
-      count += crimes.filter((c) => TARGET_CATEGORIES.includes(c.category)).length;
+      for (const c of crimes) {
+        if (!TARGET_CATEGORIES.includes(c.category)) continue;
+        counts.total++;
+        if (c.category === "burglary") counts.burglary++;
+        else if (c.category === "robbery") counts.robbery++;
+        else if (c.category === "vehicle-crime") counts.vehicle++;
+        else if (c.category === "theft-from-the-person") counts.theftPerson++;
+        else if (c.category === "other-theft") counts.otherTheft++;
+        else if (c.category === "criminal-damage-arson") counts.arson++;
+        else if (c.category === "shoplifting") counts.shoplifting++;
+        else if (c.category === "anti-social-behaviour") counts.asb++;
+        else if (c.category === "violent-crime") counts.violent++;
+      }
 
       await new Promise((r) => setTimeout(r, 100));
     }
 
-    return count;
+    return counts;
   } catch {
-    return 0;
+    return emptyCounts();
   }
 }
 
@@ -108,7 +160,7 @@ export async function getCrimeCountAtLocation(
 export async function getCrimeCountProxy(
   lat: number,
   lng: number
-): Promise<number> {
+): Promise<CrimeCounts> {
   // This is called server-side so can hit data.police.uk directly
   return getCrimeCountAtLocation(lat, lng);
 }

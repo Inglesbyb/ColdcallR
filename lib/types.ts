@@ -47,6 +47,15 @@ export interface Lead {
   risk_profile_tag: RiskTag | null;
   sales_hook: string | null;
   recent_burglaries_count: number;
+  crime_burglary_count: number;
+  crime_robbery_count: number;
+  crime_vehicle_count: number;
+  crime_theft_person_count: number;
+  crime_other_theft_count: number;
+  crime_arson_count: number;
+  crime_shoplifting_count: number;
+  crime_asb_count: number;
+  crime_violent_count: number;
 
   // Visit Tracking
   visited: boolean;
@@ -190,6 +199,15 @@ export interface ScoringInput {
   company_status: string;
   is_commercial_unit: boolean;
   recent_burglaries_count: number;
+  crime_burglary_count?: number;
+  crime_robbery_count?: number;
+  crime_vehicle_count?: number;
+  crime_theft_person_count?: number;
+  crime_other_theft_count?: number;
+  crime_arson_count?: number;
+  crime_shoplifting_count?: number;
+  crime_asb_count?: number;
+  crime_violent_count?: number;
   visit_status: VisitStatus;
 }
 
