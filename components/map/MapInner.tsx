@@ -9,6 +9,7 @@ import { createLeadIcon } from "./LeadMarker";
 import { MapControls } from "./MapControls";
 import { LeadDrawer } from "@/components/leads/LeadDrawer";
 import type { Lead } from "@/lib/types";
+import { useRouteStore } from "@/store/routeStore";
 
 // Fix Leaflet default icon path broken by webpack
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
@@ -106,6 +107,8 @@ export default function MapInner({
   onLeadUpdate,
   onDrawerClose,
 }: MapInnerProps) {
+  const { isInRoute } = useRouteStore();
+
   return (
     <>
       <MapContainer
@@ -143,8 +146,8 @@ export default function MapInner({
               <Marker
                 key={lead.id}
                 position={[lead.lat, lead.lng]}
-                icon={createLeadIcon(lead, lead.id === selectedLeadId)}
-                zIndexOffset={lead.id === selectedLeadId ? 1000 : (lead.lead_score >= 75 ? 100 : 0)}
+                icon={createLeadIcon(lead, lead.id === selectedLeadId, isInRoute(lead.id))}
+                zIndexOffset={lead.id === selectedLeadId ? 1000 : (isInRoute(lead.id) ? 500 : (lead.lead_score >= 75 ? 100 : 0))}
                 eventHandlers={{
                   click: (e) => {
                     L.DomEvent.stopPropagation(e as any);

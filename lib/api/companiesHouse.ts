@@ -39,14 +39,10 @@ export async function searchByLocation(
   startIndex = 0,
   itemsPerPage = 100
 ): Promise<CHCompany[]> {
-  const fromDate = new Date();
-  fromDate.setFullYear(fromDate.getFullYear() - 2); // Pull active companies incorporated in the last 2 years for a good spread
-
   const params = new URLSearchParams({
     location: location,
     company_status: "active",
     sic_codes: TARGET_SIC_CODES.join(","),
-    incorporated_from: fromDate.toISOString().split("T")[0],
     start_index: String(startIndex),
     size: String(itemsPerPage),
   });

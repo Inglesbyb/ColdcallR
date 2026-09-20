@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Drawer } from "vaul";
-import { X, Calendar, AlertTriangle, SlidersHorizontal, Check, MapPin, Phone, Building2, TrendingUp, Goal } from "lucide-react";
+import { X, AlertTriangle, SlidersHorizontal, Check, MapPin, Phone, Building2, TrendingUp } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import type { LeadFilter, VisitStatus } from "@/lib/types";
+import type { LeadFilter } from "@/lib/types";
 
 interface FilterDrawerProps {
   open: boolean;
@@ -25,6 +25,7 @@ export const LIVERPOOL_OUTCODES = [
   { group: "Wirral", codes: ["CH41", "CH42", "CH43", "CH44", "CH45", "CH46", "CH47", "CH48", "CH49", "CH60", "CH61", "CH62", "CH63"] },
   { group: "St Helens & Halton", codes: ["WA7", "WA8", "WA9", "WA10", "WA11", "WA12"] },
 ];
+
 export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDrawerProps) {
   const [localFilter, setLocalFilter] = useState<LeadFilter>(filter);
   const [postcodeInput, setPostcodeInput] = useState("");
@@ -61,68 +62,62 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
     };
     setLocalFilter(resetFilter);
     onApplyFilters(resetFilter);
-    
-    // Clear URL params completely by replacing with just the pathname
     router.replace(pathname);
-    
     onClose();
   };
 
-  const toggleArrayItem = <T,>(arr: T[] | undefined, item: T): T[] | undefined => {
-    const current = arr || [];
-    const isSelected = current.includes(item);
-    const updated = isSelected ? current.filter(i => i !== item) : [...current, item];
-    return updated.length > 0 ? updated : undefined;
-  };
+  const pillBase = "py-2 px-4 rounded-full border text-sm font-medium transition-all flex items-center gap-2 active:scale-95";
+  const pillActive = "bg-[var(--color-accent)]/15 border-[var(--color-accent)]/40 text-[var(--color-accent-hover)]";
+  const pillInactive = "bg-[var(--color-bg-surface)] border-[var(--color-border)] text-slate-400 hover:text-slate-300 hover:bg-[var(--color-bg-overlay)]";
 
   return (
     <Drawer.Root open={open} onOpenChange={(o) => !o && onClose()} shouldScaleBackground={false}>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[1000]" />
-        
+
         <Drawer.Content
-          className="fixed bottom-0 left-0 right-0 z-[1001] pointer-events-auto flex flex-col rounded-t-3xl bg-slate-900 border-t border-slate-700/60 shadow-2xl max-h-[90vh] focus:outline-none"
+          className="fixed bottom-0 left-0 right-0 z-[1001] pointer-events-auto flex flex-col rounded-t-3xl bg-[var(--color-bg-raised)] border-t border-[var(--glass-border)] shadow-2xl max-h-[90vh] focus:outline-none"
         >
           {/* Handle */}
           <div className="flex justify-center pt-3 pb-2 flex-shrink-0">
             <div className="w-12 h-1.5 rounded-full bg-slate-700" />
           </div>
 
-          <div className="flex items-center justify-between px-5 pb-2 border-b border-slate-800">
-            <h2 className="text-lg font-semibold text-white flex items-center gap-2">
-              <SlidersHorizontal className="w-5 h-5 text-blue-400" />
-              Advanced Filters
+          <div className="flex items-center justify-between px-5 pb-3 border-b border-[var(--color-border)]">
+            <h2 className="text-lg font-bold text-white flex items-center gap-2 font-display">
+              <SlidersHorizontal className="w-5 h-5 text-[var(--color-accent)]" />
+              Filters
             </h2>
             <button
               onClick={onClose}
-              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-[var(--color-bg-overlay)] transition-colors touch-target"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-5 space-y-8">
-            
+          <div className="flex-1 overflow-y-auto p-5 space-y-7">
+
             {/* LOCATION */}
             <section className="space-y-3">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-emerald-400" /> Postcode Area
+                <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                  <MapPin className="w-3.5 h-3.5 text-emerald-400" /> Postcode Area
                 </h3>
                 {localFilter.postcodes && localFilter.postcodes.length > 0 && (
-                  <button 
+                  <button
                     onClick={() => setLocalFilter({ ...localFilter, postcodes: undefined })}
-                    className="text-xs text-slate-500 hover:text-white"
+                    className="text-[11px] text-slate-500 hover:text-white"
                   >
                     Clear all
                   </button>
                 )}
               </div>
-              
-              <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-2 focus-within:border-emerald-500/50 transition-colors">
+
+              <div className="bg-[var(--color-bg-surface)] border border-[var(--color-border)] rounded-xl p-2.5 focus-within:border-emerald-500/40 transition-colors">
                 <div className="flex flex-wrap gap-2 mb-2">
                   {localFilter.postcodes?.map((code) => (
-                    <span key={code} className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-1 rounded-md text-sm flex items-center gap-1">
+                    <span key={code} className="bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 px-2 py-1 rounded-lg text-sm flex items-center gap-1">
                       {code}
                       <button onClick={() => {
                         const newCodes = localFilter.postcodes?.filter(c => c !== code);
@@ -146,13 +141,13 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                         setPostcodeInput("");
                       }
                     }}
-                    placeholder={localFilter.postcodes?.length ? "Add another..." : "e.g. L1, CH41..."}
-                    className="flex-1 bg-transparent text-sm text-white placeholder:text-slate-500 focus:outline-none min-w-[120px] px-1 py-1"
+                    placeholder={localFilter.postcodes?.length ? "Add another…" : "e.g. L1, CH41…"}
+                    className="flex-1 bg-transparent text-sm text-white placeholder:text-slate-600 focus:outline-none min-w-[120px] px-1 py-1"
                   />
                 </div>
-                
+
                 {postcodeInput && (
-                  <div className="mt-2 border-t border-slate-700/50 pt-2 max-h-40 overflow-y-auto">
+                  <div className="mt-2 border-t border-[var(--color-border)] pt-2 max-h-40 overflow-y-auto">
                     {LIVERPOOL_OUTCODES.flatMap(g => g.codes)
                       .filter(c => c.startsWith(postcodeInput) && !localFilter.postcodes?.includes(c))
                       .map(code => (
@@ -162,14 +157,14 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                             setLocalFilter({ ...localFilter, postcodes: [...(localFilter.postcodes || []), code] });
                             setPostcodeInput("");
                           }}
-                          className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-slate-700 rounded-md transition-colors"
+                          className="w-full text-left px-3 py-2 text-sm text-slate-300 hover:bg-[var(--color-bg-overlay)] rounded-lg transition-colors"
                         >
                           <span className="font-medium text-white mr-2">{code}</span>
                           <span className="text-slate-500">{LIVERPOOL_OUTCODES.find(g => g.codes.includes(code))?.group}</span>
                         </button>
                     ))}
                     {LIVERPOOL_OUTCODES.flatMap(g => g.codes).filter(c => c.startsWith(postcodeInput) && !localFilter.postcodes?.includes(c)).length === 0 && (
-                      <div className="px-3 py-2 text-sm text-slate-500">Press Enter to add custom "{postcodeInput}"</div>
+                      <div className="px-3 py-2 text-sm text-slate-600">Press Enter to add &ldquo;{postcodeInput}&rdquo;</div>
                     )}
                   </div>
                 )}
@@ -178,8 +173,8 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
 
             {/* SCORE TIERS */}
             <section className="space-y-3">
-              <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-red-400" /> Lead Temperature
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <TrendingUp className="w-3.5 h-3.5 text-red-400" /> Lead Temperature
               </h3>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -191,12 +186,7 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                   <button
                     key={String(opt.value)}
                     onClick={() => setLocalFilter({ ...localFilter, score_tier: opt.value as any })}
-                    className={cn(
-                      "py-2 px-4 rounded-full border text-sm font-medium transition-all flex items-center gap-2",
-                      localFilter.score_tier === opt.value
-                        ? "bg-red-600/20 border-red-500/50 text-red-300"
-                        : "bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-700"
-                    )}
+                    className={cn(pillBase, localFilter.score_tier === opt.value ? pillActive : pillInactive)}
                   >
                     {localFilter.score_tier === opt.value && <Check className="w-3 h-3" />}
                     {opt.label}
@@ -207,8 +197,8 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
 
             {/* COMPANY AGE */}
             <section className="space-y-3">
-              <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-purple-400" /> Company Age
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <Building2 className="w-3.5 h-3.5 text-purple-400" /> Company Age
               </h3>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -216,17 +206,12 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                   { value: "gt_30d", label: "> 30 Days" },
                   { value: "gt_90d", label: "> 90 Days" },
                   { value: "gt_1y", label: "> 1 Year" },
-                  { value: "lt_30d", label: "< 30 Days (Brand New)" },
+                  { value: "lt_30d", label: "< 30 Days" },
                 ].map((opt) => (
                   <button
                     key={String(opt.value)}
                     onClick={() => setLocalFilter({ ...localFilter, company_age: opt.value as any })}
-                    className={cn(
-                      "py-2 px-4 rounded-full border text-sm font-medium transition-all flex items-center gap-2",
-                      localFilter.company_age === opt.value
-                        ? "bg-sky-600 border-sky-500 text-white"
-                        : "bg-slate-800 border-slate-700 text-slate-300 hover:border-slate-600"
-                    )}
+                    className={cn(pillBase, localFilter.company_age === opt.value ? pillActive : pillInactive)}
                   >
                     {localFilter.company_age === opt.value && <Check className="w-3 h-3" />}
                     {opt.label}
@@ -235,11 +220,10 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
               </div>
             </section>
 
-
             {/* CONTACT DATA */}
             <section className="space-y-3">
-              <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <Phone className="w-4 h-4 text-sky-400" /> Contact Data
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 text-sky-400" /> Contact Data
               </h3>
               <div className="flex flex-col gap-2">
                 {[
@@ -253,13 +237,11 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                       key={opt.key}
                       onClick={() => setLocalFilter({ ...localFilter, [opt.key]: !isActive })}
                       className={cn(
-                        "py-2.5 px-4 rounded-xl border text-sm font-medium transition-all flex items-center gap-3",
-                        isActive
-                          ? "bg-sky-600/20 border-sky-500/50 text-sky-300"
-                          : "bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-700"
+                        "py-2.5 px-4 rounded-xl border text-sm font-medium transition-all flex items-center gap-3 active:scale-[0.98]",
+                        isActive ? pillActive : pillInactive
                       )}
                     >
-                      {isActive ? <Check className="w-4 h-4" /> : <div className="w-4 h-4 rounded-full border border-slate-500" />}
+                      {isActive ? <Check className="w-4 h-4" /> : <div className="w-4 h-4 rounded-full border border-slate-600" />}
                       {opt.label}
                     </button>
                   );
@@ -267,11 +249,10 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
               </div>
             </section>
 
-
             {/* CRIME ACTIVITY */}
             <section className="space-y-3">
-              <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-orange-400" /> Crime Activity (Burglaries)
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 text-orange-400" /> Crime Activity
               </h3>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -282,12 +263,7 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                   <button
                     key={String(opt.value)}
                     onClick={() => setLocalFilter({ ...localFilter, min_burglaries: opt.value })}
-                    className={cn(
-                      "py-2 px-4 rounded-full border text-sm font-medium transition-all flex items-center gap-2",
-                      localFilter.min_burglaries === opt.value
-                        ? "bg-orange-600/20 border-orange-500/50 text-orange-300"
-                        : "bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-700"
-                    )}
+                    className={cn(pillBase, localFilter.min_burglaries === opt.value ? "bg-orange-500/15 border-orange-500/30 text-orange-300" : pillInactive)}
                   >
                     {localFilter.min_burglaries === opt.value && <Check className="w-3 h-3" />}
                     {opt.label}
@@ -298,8 +274,8 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
 
             {/* TARGET SEGMENTS */}
             <section className="space-y-3">
-              <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-orange-400" /> Target Segments
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 text-orange-400" /> Target Segments
               </h3>
               <div className="flex flex-wrap gap-2">
                 {[
@@ -307,7 +283,7 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                   { value: "ELEVATED_CRIME", label: "Elevated Crime" },
                   { value: "PREMIUM_RETAIL", label: "Retail" },
                   { value: "HOSPITALITY", label: "Hospitality" },
-                  { value: "INDUSTRIAL_TARGET", label: "Industrial/Trades" },
+                  { value: "INDUSTRIAL_TARGET", label: "Industrial" },
                   { value: "AUTOMOTIVE", label: "Automotive" },
                   { value: "HEALTHCARE", label: "Healthcare" },
                   { value: "NEW_BUSINESS", label: "New Business" },
@@ -323,12 +299,7 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                           : [...currentTags, opt.value];
                         setLocalFilter({ ...localFilter, risk_tags: newTags.length > 0 ? newTags : undefined });
                       }}
-                      className={cn(
-                        "py-2 px-4 rounded-full border text-sm font-medium transition-all flex items-center gap-2",
-                        isActive
-                          ? "bg-blue-600/20 border-blue-500/50 text-blue-300"
-                          : "bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-700"
-                      )}
+                      className={cn(pillBase, isActive ? pillActive : pillInactive)}
                     >
                       {isActive && <Check className="w-3 h-3" />}
                       {opt.label}
@@ -337,21 +308,21 @@ export function FilterDrawer({ open, onClose, filter, onApplyFilters }: FilterDr
                 })}
               </div>
             </section>
-            
+
             <div className="h-6" /> {/* padding bottom safe area spacer */}
           </div>
-          
+
           {/* Footer actions */}
-          <div className="p-4 border-t border-slate-800 flex gap-3 pb-safe bg-slate-900">
+          <div className="p-4 border-t border-[var(--color-border)] flex gap-3 pb-safe bg-[var(--color-bg-raised)]">
             <button
               onClick={handleClear}
-              className="px-6 py-3 rounded-xl font-medium text-slate-300 border border-slate-700 hover:bg-slate-800 transition-colors"
+              className="px-6 py-3 rounded-xl font-semibold text-slate-300 border border-[var(--color-border)] hover:bg-[var(--color-bg-surface)] transition-colors active:scale-95"
             >
               Reset
             </button>
             <button
               onClick={handleApply}
-              className="flex-1 px-6 py-3 rounded-xl font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-lg shadow-blue-900/20"
+              className="flex-1 px-6 py-3 rounded-xl font-semibold text-white bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] transition-colors shadow-lg active:scale-95"
             >
               Apply Filters
             </button>

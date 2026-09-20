@@ -3,19 +3,19 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none",
   {
     variants: {
       variant: {
-        default: "bg-blue-600 text-white",
-        secondary: "bg-slate-700 text-slate-200",
-        destructive: "bg-red-600/20 text-red-400 border border-red-600/30",
-        outline: "border border-slate-600 text-slate-300",
-        hot: "bg-red-600 text-white",
-        warm: "bg-orange-500 text-white",
-        cool: "bg-yellow-500 text-black",
-        visited: "bg-slate-600 text-slate-300",
-        success: "bg-emerald-600 text-white",
+        default: "bg-[var(--color-accent)]/20 text-[var(--color-accent)] border border-[var(--color-accent)]/30",
+        secondary: "bg-[var(--color-bg-overlay)] text-slate-300 border border-[var(--color-border)]",
+        destructive: "bg-red-500/15 text-red-400 border border-red-500/25",
+        outline: "border border-[var(--color-border)] text-slate-400",
+        hot: "bg-gradient-to-r from-red-600 to-orange-500 text-white shadow-sm",
+        warm: "bg-gradient-to-r from-orange-500 to-amber-400 text-white shadow-sm",
+        cool: "bg-gradient-to-r from-blue-500 to-cyan-400 text-white shadow-sm",
+        visited: "bg-slate-700/60 text-slate-400 border border-slate-600/40",
+        success: "bg-emerald-500/15 text-emerald-400 border border-emerald-500/25",
       },
     },
     defaultVariants: {

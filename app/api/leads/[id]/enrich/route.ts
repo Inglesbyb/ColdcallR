@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase/server";
 import { getCompanyOfficers } from "@/lib/api/companiesHouse";
 import { scrapeContactInfo } from "@/lib/api/webEnrichment";
 
@@ -12,13 +12,19 @@ export async function POST(
     return NextResponse.json({ error: "Missing lead ID" }, { status: 400 });
   }
 
-  const supabase = getSupabaseServerClient();
+  // Authenticate
+  const sessionClient = await getSupabaseServerClient();
+  const { data: { user } } = await sessionClient.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const supabase = getSupabaseAdminClient();
 
   // 1. Fetch current lead
   const { data: lead, error: fetchError } = await supabase
     .from("leads")
     .select("*")
     .eq("id", id)
+    .eq("user_id", user.id)
     .single();
 
   if (fetchError || !lead) {

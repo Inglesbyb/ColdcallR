@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase/server";
 import type { LeadFilter } from "@/lib/types";
+
+// Helper: get the authenticated user's ID from the session cookie
+async function getAuthenticatedUserId(): Promise<string | null> {
+  const supabase = await getSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
 
 // GET /api/leads — fetch leads with optional filters
 export async function GET(request: NextRequest) {
-  const supabase = getSupabaseServerClient();
+  const userId = await getAuthenticatedUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const supabase = getSupabaseAdminClient();
   const { searchParams } = new URL(request.url);
 
   const filter: LeadFilter = {
@@ -48,10 +58,11 @@ export async function GET(request: NextRequest) {
   const rawPostcodes = searchParams.get("postcodes") || searchParams.get("outcode") || searchParams.get("postcode_prefix");
   const company_age = searchParams.get("company_age");
 
-  // Base query with exact count
+  // Base query scoped to this user, with exact count
   let query = supabase
     .from("leads")
     .select("*", { count: "exact" })
+    .or(`user_id.eq.${userId},user_id.is.null`)
     .not("lat", "is", null)
     .not("lng", "is", null)
     .range(filter.offset!, filter.offset! + filter.limit! - 1);
@@ -204,7 +215,10 @@ export async function GET(request: NextRequest) {
 
 // POST /api/leads — create a new lead manually
 export async function POST(request: NextRequest) {
-  const supabase = getSupabaseServerClient();
+  const userId = await getAuthenticatedUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const supabase = getSupabaseAdminClient();
 
   let body: Partial<Record<string, unknown>>;
   try {
@@ -227,6 +241,7 @@ export async function POST(request: NextRequest) {
     .from("leads")
     .insert({
       ...body,
+      user_id: userId,
       visit_status: "unvisited",
       visited: false,
       lead_score: body.lead_score ?? 50,

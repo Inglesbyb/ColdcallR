@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase/server";
 import { scoreLead, getSicDescription } from "@/lib/scoring";
 
 // POST /api/seed/mock — seeds realistic fake Liverpool leads for demo/testing
@@ -109,8 +109,12 @@ const MOCK_BUSINESSES = [
   { company_number: "MOCK00050", name: "Hope Street Hotel Ltd", status: "active", incorporated: "2004-11-18", sic: ["55100"], postcode: "L1 9DA", address: "40 Hope Street", lat: 53.3988, lng: -2.9741, burglaries: 3 },
 ];
 
-export async function POST(request: NextRequest) {
-  const supabase = getSupabaseServerClient();
+export async function GET(request: NextRequest) {
+  const sessionClient = await getSupabaseServerClient();
+  const { data: { user } } = await sessionClient.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const supabase = getSupabaseAdminClient();
   let seeded = 0;
   let skipped = 0;
 
@@ -127,6 +131,7 @@ export async function POST(request: NextRequest) {
     const { error } = await supabase.from("leads").upsert(
       {
         company_number: biz.company_number,
+        user_id: user.id,
         company_name: biz.name,
         company_status: biz.status,
         incorporation_date: biz.incorporated,
@@ -146,7 +151,7 @@ export async function POST(request: NextRequest) {
         visit_status: "unvisited",
         visited: false,
       },
-      { onConflict: "company_number" }
+      { ignoreDuplicates: true }
     );
 
     if (error) {

@@ -1,17 +1,44 @@
+import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
+import { cookies } from "next/headers";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 /**
- * Server-side Supabase client using the SERVICE ROLE key.
- * Only use in Route Handlers, Server Components, or Server Actions.
- * NEVER expose this client to the browser.
+ * Session-aware server client.
+ * Reads the logged-in user's session from cookies.
+ * Use this to call supabase.auth.getUser() in API routes / Server Components.
  */
-export function getSupabaseServerClient() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+export async function getSupabaseServerClient() {
+  const cookieStore = await cookies();
 
-  return createClient(supabaseUrl, serviceRoleKey ?? anonKey, {
+  return createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() {
+        return cookieStore.getAll();
+      },
+      setAll(cookiesToSet) {
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          );
+        } catch {
+          // Server Component — cookies can't be set here, that's fine
+        }
+      },
+    },
+  });
+}
+
+/**
+ * Admin client using the service role key.
+ * Bypasses RLS. Use only in trusted server-side code after
+ * manually verifying the user's identity via getSupabaseServerClient().
+ */
+export function getSupabaseAdminClient() {
+  return createClient(supabaseUrl, supabaseServiceRoleKey, {
     auth: {
       persistSession: false,
       autoRefreshToken: false,

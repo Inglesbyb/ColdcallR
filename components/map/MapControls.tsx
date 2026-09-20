@@ -40,47 +40,35 @@ export function MapControls() {
     map.setView(LIVERPOOL_CENTER, LIVERPOOL_ZOOM);
   }, [map]);
 
+  const btnClass = cn(
+    "w-11 h-11 rounded-2xl glass flex items-center justify-center shadow-lg",
+    "text-slate-300 hover:text-white hover:bg-[var(--color-bg-overlay)] transition-all",
+    "focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)] active:scale-90"
+  );
+
   return (
     <div className="absolute right-3 top-20 z-[1000] flex flex-col gap-2">
       {/* Locate Me */}
       <button
         onClick={handleLocate}
         title="Find my location"
-        className={cn(
-          "w-10 h-10 rounded-xl bg-slate-900/90 backdrop-blur border border-slate-700/60",
-          "flex items-center justify-center shadow-lg",
-          "text-slate-300 hover:text-white hover:bg-slate-800 transition-all",
-          "focus:outline-none focus:ring-2 focus:ring-blue-500",
-          locating && "text-blue-400 animate-pulse"
-        )}
+        className={cn(btnClass, locating && "text-[var(--color-accent)] animate-pulse")}
       >
         <Locate className={cn("w-5 h-5", locateError && "text-red-400")} />
       </button>
 
       {/* Zoom In */}
-      <button
-        onClick={() => map.zoomIn()}
-        title="Zoom in"
-        className="w-10 h-10 rounded-xl bg-slate-900/90 backdrop-blur border border-slate-700/60 flex items-center justify-center shadow-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
+      <button onClick={() => map.zoomIn()} title="Zoom in" className={btnClass}>
         <ZoomIn className="w-5 h-5" />
       </button>
 
       {/* Zoom Out */}
-      <button
-        onClick={() => map.zoomOut()}
-        title="Zoom out"
-        className="w-10 h-10 rounded-xl bg-slate-900/90 backdrop-blur border border-slate-700/60 flex items-center justify-center shadow-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
+      <button onClick={() => map.zoomOut()} title="Zoom out" className={btnClass}>
         <ZoomOut className="w-5 h-5" />
       </button>
 
       {/* Reset to Liverpool */}
-      <button
-        onClick={handleReset}
-        title="Reset to Liverpool"
-        className="w-10 h-10 rounded-xl bg-slate-900/90 backdrop-blur border border-slate-700/60 flex items-center justify-center shadow-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
+      <button onClick={handleReset} title="Reset to Liverpool" className={btnClass}>
         <Layers className="w-5 h-5" />
       </button>
     </div>

@@ -1,19 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase/server";
 import type { UpdateLeadPayload } from "@/lib/types";
+
+async function getAuthenticatedUserId(): Promise<string | null> {
+  const supabase = await getSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id ?? null;
+}
 
 // GET /api/leads/[id] — fetch a single lead
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = getSupabaseServerClient();
+  const userId = await getAuthenticatedUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const supabase = getSupabaseAdminClient();
   const { id } = await params;
 
   const { data, error } = await supabase
     .from("leads")
     .select("*")
     .eq("id", id)
+    .or(`user_id.eq.${userId},user_id.is.null`)
     .single();
 
   if (error) {
@@ -31,7 +41,10 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = getSupabaseServerClient();
+  const userId = await getAuthenticatedUserId();
+  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const supabase = getSupabaseAdminClient();
   const { id } = await params;
 
   let body: UpdateLeadPayload;
@@ -65,10 +78,12 @@ export async function PATCH(
     return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
   }
 
+  // Scope the update to this user's lead only or unassigned
   const { data, error } = await supabase
     .from("leads")
     .update(update)
     .eq("id", id)
+    .or(`user_id.eq.${userId},user_id.is.null`)
     .select()
     .single();
 

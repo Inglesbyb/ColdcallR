@@ -31,12 +31,19 @@ function getVisitStatusIcon(status: VisitStatus): string {
   return icons[status];
 }
 
-export function createLeadIcon(lead: Lead, isSelected: boolean = false): L.DivIcon {
+export function createLeadIcon(lead: Lead, isSelected: boolean = false, inRoute: boolean = false): L.DivIcon {
   const color = getMarkerColor(lead);
   const statusIcon = getVisitStatusIcon(lead.visit_status);
   const isHot = lead.lead_score >= 75 && lead.visit_status === "unvisited";
   const scale = isSelected ? "scale(1.25)" : "scale(1)";
-  const ringStyle = isSelected ? "box-shadow: 0 0 0 4px rgba(255,255,255,0.8), 0 4px 12px rgba(0,0,0,0.5);" : `box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 ${isHot ? "3px" : "0"} ${isHot ? color + "60" : "transparent"};`;
+  
+  let ringStyle = `box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 0 ${isHot ? "3px" : "0"} ${isHot ? color + "60" : "transparent"};`;
+  
+  if (isSelected) {
+    ringStyle = "box-shadow: 0 0 0 4px rgba(255,255,255,0.8), 0 4px 12px rgba(0,0,0,0.5);";
+  } else if (inRoute) {
+    ringStyle = "box-shadow: 0 0 0 3px #fbbf24, 0 4px 12px rgba(0,0,0,0.5);"; // Gold ring for route
+  }
 
   return L.divIcon({
     className: "",
@@ -72,14 +79,14 @@ export function createLeadIcon(lead: Lead, isSelected: boolean = false): L.DivIc
 }
 
 // Hook to update a marker icon when lead state changes
-export function useLeadMarkerIcon(lead: Lead, isSelected: boolean = false) {
+export function useLeadMarkerIcon(lead: Lead, isSelected: boolean = false, inRoute: boolean = false) {
   const markerRef = useRef<L.Marker | null>(null);
 
   useEffect(() => {
     if (markerRef.current) {
-      markerRef.current.setIcon(createLeadIcon(lead, isSelected));
+      markerRef.current.setIcon(createLeadIcon(lead, isSelected, inRoute));
     }
-  }, [lead.lead_score, lead.visit_status, isSelected]);
+  }, [lead.lead_score, lead.visit_status, isSelected, inRoute]);
 
   return markerRef;
 }

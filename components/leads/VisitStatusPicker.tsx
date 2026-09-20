@@ -29,50 +29,50 @@ const STATUS_OPTIONS: Array<{
     value: "unvisited",
     label: "Not Yet Visited",
     icon: <MapPin className="w-4 h-4" />,
-    className: "border-slate-600 text-slate-400",
-    activeClassName: "border-blue-500 bg-blue-500/20 text-blue-300",
+    className: "border-[var(--color-border)] text-slate-400",
+    activeClassName: "border-[var(--color-accent)]/50 bg-[var(--color-accent)]/10 text-[var(--color-accent)]",
   },
   {
     value: "attempted_no_answer",
     label: "Attempted (No Answer)",
     icon: <ShieldOff className="w-4 h-4" />,
-    className: "border-slate-600 text-slate-400",
-    activeClassName: "border-orange-500 bg-orange-500/20 text-orange-300",
+    className: "border-[var(--color-border)] text-slate-400",
+    activeClassName: "border-orange-500/50 bg-orange-500/10 text-orange-300",
   },
   {
     value: "pitched_follow_up",
     label: "Pitched / Follow-up",
     icon: <MessageCircle className="w-4 h-4" />,
-    className: "border-slate-600 text-slate-400",
-    activeClassName: "border-purple-500 bg-purple-500/20 text-purple-300",
+    className: "border-[var(--color-border)] text-slate-400",
+    activeClassName: "border-purple-500/50 bg-purple-500/10 text-purple-300",
   },
   {
     value: "spoke_to_owner",
     label: "Spoke to Owner",
     icon: <CheckCircle2 className="w-4 h-4" />,
-    className: "border-slate-600 text-slate-400",
-    activeClassName: "border-emerald-500 bg-emerald-500/20 text-emerald-300",
+    className: "border-[var(--color-border)] text-slate-400",
+    activeClassName: "border-emerald-500/50 bg-emerald-500/10 text-emerald-300",
   },
   {
     value: "gatekeeper_blocked",
     label: "Gatekeeper Blocked",
     icon: <ShieldOff className="w-4 h-4" />,
-    className: "border-slate-600 text-slate-400",
-    activeClassName: "border-orange-500 bg-orange-500/20 text-orange-300",
+    className: "border-[var(--color-border)] text-slate-400",
+    activeClassName: "border-orange-500/50 bg-orange-500/10 text-orange-300",
   },
   {
     value: "not_interested",
     label: "Not Interested",
     icon: <ThumbsDown className="w-4 h-4" />,
-    className: "border-slate-600 text-slate-400",
-    activeClassName: "border-red-500 bg-red-500/20 text-red-300",
+    className: "border-[var(--color-border)] text-slate-400",
+    activeClassName: "border-red-500/50 bg-red-500/10 text-red-300",
   },
   {
     value: "ghost_address",
     label: "Ghost Address",
     icon: <Ghost className="w-4 h-4" />,
-    className: "border-slate-600 text-slate-400",
-    activeClassName: "border-slate-400 bg-slate-600/50 text-slate-300",
+    className: "border-[var(--color-border)] text-slate-400",
+    activeClassName: "border-slate-500/50 bg-[var(--color-bg-overlay)] text-slate-300",
   },
 ];
 
@@ -113,11 +113,11 @@ export function VisitStatusPicker({
               onClick={() => handleSelect(option.value)}
               disabled={disabled || loading !== null}
               className={cn(
-                "flex items-center gap-3 w-full rounded-lg border px-3 py-2.5 text-sm font-medium transition-all duration-150",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500/50",
+                "flex items-center gap-3 w-full rounded-xl border px-3 py-2.5 text-sm font-medium transition-all duration-150",
+                "focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/30",
                 "disabled:opacity-50 disabled:cursor-not-allowed",
                 isActive ? option.activeClassName : option.className,
-                !isActive && "hover:bg-slate-700/50"
+                !isActive && "hover:bg-[var(--color-bg-surface)] hover:text-slate-300"
               )}
             >
               <span className={cn("flex-shrink-0", isLoading && "animate-pulse")}>

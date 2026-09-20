@@ -1,13 +1,49 @@
 @import "tailwindcss";
 
 /* ─────────────────────────────────────────────────────────
-   CUSTOM PROPERTIES
+   DESIGN TOKENS
 ───────────────────────────────────────────────────────── */
 :root {
   --font-inter: "Inter", system-ui, sans-serif;
-  --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-border: rgba(148, 163, 184, 0.15);
+  --font-display: "Outfit", "Inter", system-ui, sans-serif;
+
+  /* Core palette */
+  --color-bg-base: #07090f;
+  --color-bg-raised: #0d1117;
+  --color-bg-surface: #161b22;
+  --color-bg-overlay: #1c2333;
+  --color-border: rgba(99, 115, 146, 0.12);
+  --color-border-subtle: rgba(99, 115, 146, 0.08);
+
+  /* Glass */
+  --glass-bg: rgba(13, 17, 23, 0.78);
+  --glass-border: rgba(99, 115, 146, 0.15);
+  --glass-blur: 20px;
+
+  /* Accent */
+  --color-accent: #2d8cf0;
+  --color-accent-hover: #4da3ff;
+  --color-accent-glow: rgba(45, 140, 240, 0.15);
+  --color-accent-subtle: rgba(45, 140, 240, 0.08);
+
+  /* Semantic */
+  --color-danger: #f04438;
+  --color-warning: #f79009;
+  --color-success: #12b76a;
+  --color-info: #36bffa;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px var(--color-accent-glow);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -27,12 +63,22 @@ html {
 body {
   height: 100%;
   height: -webkit-fill-available;
-  background: var(--color-background);
-  color: #f1f5f9;
+  background: var(--color-bg-base);
+  color: #e6edf3;
   font-family: var(--font-inter);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
+}
+
+/* ─────────────────────────────────────────────────────────
+   TYPOGRAPHY
+───────────────────────────────────────────────────────── */
+.font-inter {
+  font-family: var(--font-inter);
+}
+.font-display {
+  font-family: var(--font-display);
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -47,6 +93,105 @@ body {
 }
 
 /* ─────────────────────────────────────────────────────────
+   GLASS UTILITIES
+───────────────────────────────────────────────────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+}
+
+.glass-surface {
+  background: rgba(22, 27, 34, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-border);
+}
+
+/* ─────────────────────────────────────────────────────────
+   ANIMATION KEYFRAMES
+───────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes slideInBottom {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.35s ease-out both;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.25s ease-out both;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(255,255,255,0.04) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-slide-in-bottom {
+  animation: slideInBottom 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Staggered entrance for card lists */
+.stagger-1 { animation-delay: 0.03s; }
+.stagger-2 { animation-delay: 0.06s; }
+.stagger-3 { animation-delay: 0.09s; }
+.stagger-4 { animation-delay: 0.12s; }
+.stagger-5 { animation-delay: 0.15s; }
+
+/* ─────────────────────────────────────────────────────────
+   TOUCH TARGETS — Minimum 44x44 tap areas
+───────────────────────────────────────────────────────── */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────────────────────
    LEAFLET MAP OVERRIDES
 ───────────────────────────────────────────────────────── */
 
@@ -54,7 +199,7 @@ body {
 .leaflet-container {
   width: 100% !important;
   height: 100% !important;
-  background: #0f172a;
+  background: var(--color-bg-base);
   font-family: var(--font-inter);
 }
 
@@ -75,7 +220,7 @@ body {
 
 /* Attribution — minimal, dark */
 .leaflet-control-attribution {
-  background: rgba(15, 23, 42, 0.75) !important;
+  background: rgba(7, 9, 15, 0.75) !important;
   color: #475569 !important;
   font-size: 9px !important;
   border-radius: 6px 0 0 0 !important;
@@ -141,14 +286,30 @@ body {
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px #1e293b inset !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--color-bg-surface) inset !important;
   -webkit-text-fill-color: #e2e8f0 !important;
   caret-color: #e2e8f0;
 }
 
 /* ─────────────────────────────────────────────────────────
-   FONT UTILITY
+   ACCENT STRIP FOR CARDS
 ───────────────────────────────────────────────────────── */
-.font-inter {
-  font-family: var(--font-inter);
+.accent-strip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+}
+
+/* ─────────────────────────────────────────────────────────
+   GRADIENT BACKGROUNDS
+───────────────────────────────────────────────────────── */
+.bg-gradient-dark {
+  background: linear-gradient(180deg, var(--color-bg-base) 0%, #0a0e18 100%);
+}
+
+.bg-gradient-accent {
+  background: linear-gradient(135deg, var(--color-accent) 0%, #1a6dd4 100%);
 }

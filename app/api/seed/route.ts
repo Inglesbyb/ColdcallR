@@ -1,23 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase/server";
 import { fetchLiverpoolLeads } from "@/lib/api/companiesHouse";
 import { bulkLookupPostcodes } from "@/lib/api/postcodes";
 import { getCrimeCountAtLocation } from "@/lib/api/crime";
 import { scoreLead, getSicDescription } from "@/lib/scoring";
 import type { CHCompany } from "@/lib/types";
 
-// POST /api/seed — orchestrate the full data pipeline
-// This should only be called once (or when refreshing lead data)
-export async function POST(request: NextRequest) {
-  // Optional secret to prevent accidental re-seeding in production
-  const authHeader = request.headers.get("x-seed-secret");
-  const seedSecret = process.env.SEED_SECRET;
-  if (seedSecret && authHeader !== seedSecret) {
+// GET /api/seed — orchestrate the full data pipeline
+// This should only be called once per user (or when refreshing lead data)
+export async function GET(request: NextRequest) {
+  // Authenticate the user making the request
+  const sessionClient = await getSupabaseServerClient();
+  const { data: { user } } = await sessionClient.auth.getUser();
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const userId = user.id;
 
   const { searchParams } = new URL(request.url);
-  const maxCompanies = Number(searchParams.get("max") ?? "200");
+  const maxCompanies = Number(searchParams.get("max") ?? "1000");
   const skipCrime = searchParams.get("skip_crime") === "true";
 
   console.log(`[Seed] Starting pipeline — max ${maxCompanies} companies`);
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
   });
 
   // ─── Step 3: Build leads + enrich with crime data ────────────
-  const supabase = getSupabaseServerClient();
+  const supabase = getSupabaseAdminClient();
   let seeded = 0;
   let skipped = 0;
 
@@ -101,6 +102,7 @@ export async function POST(request: NextRequest) {
     const { error } = await supabase.from("leads").upsert(
       {
         company_number: company.company_number,
+        user_id: userId,
         company_name: (company as any).company_name || company.title,
         company_status: company.company_status,
         incorporation_date: company.date_of_creation,
@@ -121,7 +123,7 @@ export async function POST(request: NextRequest) {
         visit_status: "unvisited",
         visited: false,
       },
-      { onConflict: "company_number" }
+      { onConflict: "company_number,user_id" }
     );
 
     if (error) {

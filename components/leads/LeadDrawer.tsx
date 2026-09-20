@@ -22,12 +22,15 @@ import {
   Briefcase,
   Clock,
   ChevronRight,
+  ListPlus,
+  ListMinus,
 } from "lucide-react";
 import { format, parseISO, formatDistanceToNowStrict } from "date-fns";
 import { ScoreBadge, RiskTagBadge } from "@/components/leads/ScoreBadge";
 import { VisitStatusPicker } from "@/components/leads/VisitStatusPicker";
 import { Button } from "@/components/ui/button";
 import type { Lead, VisitStatus } from "@/lib/types";
+import { useRouteStore } from "@/store/routeStore";
 
 // ─── SIC plain-text lookup (subset — extend as needed) ────────────
 const SIC_DESCRIPTIONS: Record<string, string> = {
@@ -160,11 +163,11 @@ function OfficerSkeleton() {
   return (
     <div className="space-y-2 animate-pulse">
       {[1, 2].map((i) => (
-        <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-slate-800/40">
-          <div className="w-8 h-8 rounded-full bg-slate-700/50 flex-shrink-0" />
+        <div key={i} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--color-bg-overlay)]">
+          <div className="w-8 h-8 rounded-full bg-[var(--color-bg-surface)] flex-shrink-0" />
           <div className="space-y-1.5 flex-1">
-            <div className="h-3.5 bg-slate-700/50 rounded w-2/5" />
-            <div className="h-3 bg-slate-700/50 rounded w-1/3" />
+            <div className="h-3.5 bg-[var(--color-bg-surface)] rounded w-2/5" />
+            <div className="h-3 bg-[var(--color-bg-surface)] rounded w-1/3" />
           </div>
         </div>
       ))}
@@ -187,8 +190,8 @@ function OfficerCard({ officer }: { officer: Officer }) {
   const firstName = officer.name.split(" ")[0];
 
   return (
-    <div className="flex items-start gap-3 p-3 rounded-xl bg-indigo-950/40 border border-indigo-800/30">
-      <div className="w-8 h-8 rounded-full bg-indigo-900/60 flex items-center justify-center flex-shrink-0">
+    <div className="flex items-start gap-3 p-3 rounded-xl bg-indigo-500/8 border border-indigo-500/15">
+      <div className="w-8 h-8 rounded-full bg-indigo-500/15 flex items-center justify-center flex-shrink-0">
         <User className="w-4 h-4 text-indigo-400" />
       </div>
       <div className="flex-1 min-w-0">
@@ -219,6 +222,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
   const [savingNotes, setSavingNotes] = useState(false);
   const [isEnriching, setIsEnriching] = useState(false);
   const [copied, setCopied] = useState(false);
+  const { addToRoute, removeFromRoute, isInRoute } = useRouteStore();
 
   // Officers state
   const [officers, setOfficers] = useState<Officer[]>([]);
@@ -363,18 +367,18 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
         <Drawer.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40" />
 
         <Drawer.Content
-          className="fixed bottom-0 left-0 right-0 z-[9999] pointer-events-auto flex flex-col rounded-t-2xl bg-slate-900 border-t border-slate-700/60 shadow-2xl max-h-[95vh] focus:outline-none"
+          className="fixed bottom-0 left-0 right-0 z-[9999] pointer-events-auto flex flex-col rounded-t-3xl bg-[var(--color-bg-raised)] border-t border-[var(--glass-border)] shadow-2xl max-h-[95vh] focus:outline-none"
           aria-label={`Lead detail for ${lead?.company_name}`}
         >
           {/* Drag handle */}
           <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-            <div className="w-10 h-1 rounded-full bg-slate-600" />
+            <div className="w-12 h-1.5 rounded-full bg-[var(--color-bg-overlay)]" />
           </div>
 
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-full bg-slate-700 text-slate-400 hover:text-white hover:bg-slate-600 transition-colors"
+            className="absolute top-4 right-4 p-1.5 rounded-full bg-[var(--color-bg-overlay)] text-slate-400 hover:text-white hover:bg-[var(--color-bg-surface)] transition-colors"
             aria-label="Close"
           >
             <X className="w-4 h-4" />
@@ -390,7 +394,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
               {/* ═══════════════════════════════════════
                   SECTION 1 — Header & Fast Metrics
               ═══════════════════════════════════════ */}
-              <div className="px-4 pt-2 pb-4 border-b border-slate-700/60">
+              <div className="px-4 pt-2 pb-4 border-b border-[var(--color-border)]">
                 {/* Name + Score */}
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <div className="flex-1 min-w-0">
@@ -399,8 +403,8 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                     </h2>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       {/* Active status pill */}
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-green-900/50 border border-green-700/50 text-green-400">
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block" />
                         {lead.company_status?.charAt(0).toUpperCase() +
                           (lead.company_status?.slice(1) ?? "")}
                       </span>
@@ -434,7 +438,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                   </div>
                   <button
                     onClick={handleCopyAddress}
-                    className="flex items-center gap-1 px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-xs text-slate-400 hover:text-white hover:border-slate-500 transition-colors flex-shrink-0"
+                    className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-bg-overlay)] border border-[var(--color-border)] text-xs text-slate-400 hover:text-white hover:border-slate-500 transition-colors flex-shrink-0"
                     aria-label="Copy address"
                   >
                     {copied ? (
@@ -494,6 +498,35 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                       </Button>
                     </a>
                   )}
+
+                  {/* Route Button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 gap-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (lead) {
+                        if (isInRoute(lead.id)) {
+                          removeFromRoute(lead.id);
+                        } else {
+                          addToRoute(lead.id);
+                        }
+                      }
+                    }}
+                  >
+                    {lead && isInRoute(lead.id) ? (
+                      <>
+                        <ListMinus className="w-3.5 h-3.5 text-orange-400" />
+                        <span className="text-orange-400">Remove Route</span>
+                      </>
+                    ) : (
+                      <>
+                        <ListPlus className="w-3.5 h-3.5 text-[var(--color-accent)]" />
+                        <span className="text-[var(--color-accent)]">Add Route</span>
+                      </>
+                    )}
+                  </Button>
                 </div>
               </div>
 
@@ -503,10 +536,10 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                 {/* ═══════════════════════════════════════
                     SECTION 2 — 10-Second Pitch Brief
                 ═══════════════════════════════════════ */}
-                <div className="rounded-xl bg-slate-800/80 border border-slate-700/60 p-4">
+                <div className="rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] p-4">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 rounded-lg bg-blue-900/50">
-                      <Lightbulb className="w-4 h-4 text-blue-400" />
+                    <div className="p-1.5 rounded-lg bg-[var(--color-accent)]/10">
+                      <Lightbulb className="w-4 h-4 text-[var(--color-accent)]" />
                     </div>
                     <h3 className="text-sm font-bold text-white tracking-tight">
                       10-Second Pitch Brief
@@ -584,8 +617,8 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                   ) : (
                     /* Fallback: show single director from enrichment data */
                     lead.director_name ? (
-                      <div className="flex items-start gap-3 p-3 rounded-xl bg-indigo-950/40 border border-indigo-800/30">
-                        <div className="w-8 h-8 rounded-full bg-indigo-900/60 flex items-center justify-center">
+                      <div className="flex items-start gap-3 p-3 rounded-xl bg-indigo-500/8 border border-indigo-500/15">
+                        <div className="w-8 h-8 rounded-full bg-indigo-500/15 flex items-center justify-center">
                           <User className="w-4 h-4 text-indigo-400" />
                         </div>
                         <div>
@@ -652,7 +685,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                     SECTION 5 — Industry & SIC Codes
                 ═══════════════════════════════════════ */}
                 {sicWithLabels.length > 0 && (
-                  <div className="rounded-xl bg-slate-800/60 border border-slate-700/40 p-3">
+                  <div className="rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] p-3">
                     <div className="flex items-center gap-2 mb-2">
                       <Briefcase className="w-4 h-4 text-slate-400" />
                       <h3 className="text-sm font-semibold text-slate-300">
@@ -666,7 +699,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                           className="flex items-center justify-between gap-2 text-xs"
                         >
                           <span className="text-slate-200">{label}</span>
-                          <span className="text-slate-500 font-mono bg-slate-900/50 px-1.5 py-0.5 rounded">
+                          <span className="text-slate-500 font-mono bg-[var(--color-bg-base)]/60 px-1.5 py-0.5 rounded">
                             {code}
                           </span>
                         </div>
@@ -678,7 +711,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                 {/* ═══════════════════════════════════════
                     SECTION 6 — Company Info
                 ═══════════════════════════════════════ */}
-                <div className="rounded-xl bg-slate-800/60 border border-slate-700/40 p-3 space-y-2">
+                <div className="rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] p-3 space-y-2">
                   <div className="flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-slate-400" />
                     <h3 className="text-sm font-semibold text-slate-300">Company Info</h3>
@@ -722,7 +755,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                         href={lead.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] text-slate-300 hover:bg-[var(--color-bg-overlay)] hover:border-slate-500 transition-colors"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Globe className="w-4 h-4" />
@@ -744,7 +777,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                           href={link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:bg-slate-700 transition-colors"
+                          className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] text-slate-300 hover:bg-[var(--color-bg-overlay)] hover:border-slate-500 transition-colors"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <MessageCircle className="w-4 h-4" />
@@ -773,7 +806,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                     type="date"
                     value={revisitDate}
                     onChange={(e) => handleRevisitDateChange(e.target.value)}
-                    className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 [color-scheme:dark]"
+                    className="w-full rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/40 focus:border-[var(--color-accent)]/40 [color-scheme:dark] transition-colors"
                   />
                 </div>
 
@@ -795,7 +828,7 @@ export function LeadDrawer({ lead, open, onClose, onLeadUpdate }: LeadDrawerProp
                     onChange={(e) => handleNotesChange(e.target.value)}
                     placeholder="Visit notes, contacts, quotes given…"
                     rows={4}
-                    className="w-full rounded-lg bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
+                    className="w-full rounded-xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] px-3 py-2 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/40 focus:border-[var(--color-accent)]/40 resize-none transition-colors"
                   />
                 </div>
 
