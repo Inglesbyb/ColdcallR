@@ -131,7 +131,12 @@ export default function ListPage() {
       if (currentFilter.risk_tags && currentFilter.risk_tags.length > 0) {
         params.set("risk_tags", currentFilter.risk_tags.join(","));
       }
-      if (currentFilter.min_score !== undefined) params.set("min_score", String(currentFilter.min_score));
+      // Score — slider takes priority
+      if (currentFilter.min_score !== undefined && currentFilter.min_score > 0) {
+        params.set("min_score_val", String(currentFilter.min_score));
+      } else if (currentFilter.score_tier) {
+        params.set("score_tier", currentFilter.score_tier);
+      }
       if (currentFilter.unvisited_only) params.set("unvisited_only", "true");
       if (currentFilter.visit_status && currentFilter.visit_status !== "all") {
         params.set("visit_status", currentFilter.visit_status);
@@ -139,8 +144,10 @@ export default function ListPage() {
       if (currentFilter.postcodes && currentFilter.postcodes.length > 0) {
         params.set("postcodes", currentFilter.postcodes.join(","));
       }
+      // Company age range slider
+      if (currentFilter.company_age_min_years !== undefined) params.set("company_age_min_years", String(currentFilter.company_age_min_years));
+      if (currentFilter.company_age_max_years !== undefined) params.set("company_age_max_years", String(currentFilter.company_age_max_years));
       if (currentFilter.company_age) params.set("company_age", currentFilter.company_age);
-      if (currentFilter.score_tier) params.set("score_tier", currentFilter.score_tier);
       if (currentFilter.visit_statuses && currentFilter.visit_statuses.length > 0) {
         params.set("visit_statuses", currentFilter.visit_statuses.join(","));
       }
@@ -150,6 +157,12 @@ export default function ListPage() {
       if (currentFilter.has_director) params.set("has_director", "true");
       if (currentFilter.commercial_only) params.set("commercial_only", "true");
       if (search) params.set("q", search);
+      // Individual crime minimum sliders
+      const crimeKeys = ["min_crime_burglary","min_crime_robbery","min_crime_vehicle","min_crime_theft_person","min_crime_other_theft","min_crime_arson","min_crime_shoplifting","min_crime_asb","min_crime_violent"] as const;
+      for (const k of crimeKeys) {
+        const v = (currentFilter as any)[k];
+        if (v && v > 0) params.set(k, String(v));
+      }
 
       const res = await fetch(`/api/leads?${params}`);
       if (!res.ok) throw new Error("Failed to fetch leads");

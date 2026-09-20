@@ -97,6 +97,21 @@ export interface LeadFilter {
   sort_by?: string;
   searchQuery?: string;
   
+  // Individual crime minimum filters
+  min_crime_burglary?: number;
+  min_crime_robbery?: number;
+  min_crime_vehicle?: number;
+  min_crime_theft_person?: number;
+  min_crime_other_theft?: number;
+  min_crime_arson?: number;
+  min_crime_shoplifting?: number;
+  min_crime_asb?: number;
+  min_crime_violent?: number;
+  
+  // Company age range (years)
+  company_age_min_years?: number;
+  company_age_max_years?: number;
+  
   // Contact & Enrichment
   has_phone?: boolean;
   has_website?: boolean;

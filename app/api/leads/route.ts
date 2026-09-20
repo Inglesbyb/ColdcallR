@@ -58,6 +58,24 @@ export async function GET(request: NextRequest) {
   const rawPostcodes = searchParams.get("postcodes") || searchParams.get("outcode") || searchParams.get("postcode_prefix");
   const company_age = searchParams.get("company_age");
 
+  // Individual crime minimums
+  const min_crime_burglary = searchParams.get("min_crime_burglary") ? Number(searchParams.get("min_crime_burglary")) : undefined;
+  const min_crime_robbery = searchParams.get("min_crime_robbery") ? Number(searchParams.get("min_crime_robbery")) : undefined;
+  const min_crime_vehicle = searchParams.get("min_crime_vehicle") ? Number(searchParams.get("min_crime_vehicle")) : undefined;
+  const min_crime_theft_person = searchParams.get("min_crime_theft_person") ? Number(searchParams.get("min_crime_theft_person")) : undefined;
+  const min_crime_other_theft = searchParams.get("min_crime_other_theft") ? Number(searchParams.get("min_crime_other_theft")) : undefined;
+  const min_crime_arson = searchParams.get("min_crime_arson") ? Number(searchParams.get("min_crime_arson")) : undefined;
+  const min_crime_shoplifting = searchParams.get("min_crime_shoplifting") ? Number(searchParams.get("min_crime_shoplifting")) : undefined;
+  const min_crime_asb = searchParams.get("min_crime_asb") ? Number(searchParams.get("min_crime_asb")) : undefined;
+  const min_crime_violent = searchParams.get("min_crime_violent") ? Number(searchParams.get("min_crime_violent")) : undefined;
+
+  // Company age range (years)
+  const company_age_min_years = searchParams.get("company_age_min_years") ? Number(searchParams.get("company_age_min_years")) : undefined;
+  const company_age_max_years = searchParams.get("company_age_max_years") ? Number(searchParams.get("company_age_max_years")) : undefined;
+
+  // Min lead score override
+  const min_score_override = searchParams.get("min_score_val") ? Number(searchParams.get("min_score_val")) : undefined;
+
   // Base query scoped to this user, with exact count
   let query = supabase
     .from("leads")
@@ -97,8 +115,10 @@ export async function GET(request: NextRequest) {
     query = query.eq("visited", false);
   }
 
-  // Score Tiers (Overrides min_score if set)
-  if (score_tier === "hot") {
+  // Score: slider override takes priority over pill-based tiers
+  if (min_score_override !== undefined && min_score_override > 0) {
+    query = query.gte("lead_score", min_score_override);
+  } else if (score_tier === "hot") {
     query = query.gte("lead_score", 80);
   } else if (score_tier === "warm") {
     query = query.gte("lead_score", 50).lt("lead_score", 80);
@@ -118,41 +138,48 @@ export async function GET(request: NextRequest) {
     query = query.gte("recent_burglaries_count", min_burglaries);
   }
 
-  // Company Age filter
-  if (company_age) {
+  // Company Age Range Filter (slider: min/max years)
+  if (company_age_min_years !== undefined || company_age_max_years !== undefined) {
+    const today = new Date();
+    // Older than max_years (incorporated before this date)
+    if (company_age_min_years !== undefined && company_age_min_years > 0) {
+      const maxDate = new Date(today);
+      maxDate.setFullYear(maxDate.getFullYear() - company_age_min_years);
+      query = query.lte("incorporation_date", maxDate.toISOString());
+    }
+    // Younger than max_years (incorporated after this date)
+    if (company_age_max_years !== undefined && company_age_max_years < 30) {
+      const minDate = new Date(today);
+      minDate.setFullYear(minDate.getFullYear() - company_age_max_years);
+      query = query.gte("incorporation_date", minDate.toISOString());
+    }
+  } else if (company_age) {
+    // Legacy pill button fallback
     const today = new Date();
     switch(company_age) {
-      case "gt_30d": {
-        const d = new Date(today); d.setDate(d.getDate() - 30);
-        query = query.lte("incorporation_date", d.toISOString());
-        break;
-      }
-      case "gt_90d": {
-        const d = new Date(today); d.setDate(d.getDate() - 90);
-        query = query.lte("incorporation_date", d.toISOString());
-        break;
-      }
-      case "gt_1y": {
-        const d = new Date(today); d.setFullYear(d.getFullYear() - 1);
-        query = query.lte("incorporation_date", d.toISOString());
-        break;
-      }
-      case "lt_30d": {
-        const d = new Date(today); d.setDate(d.getDate() - 30);
-        query = query.gte("incorporation_date", d.toISOString());
-        break;
-      }
+      case "gt_30d": { const d = new Date(today); d.setDate(d.getDate() - 30); query = query.lte("incorporation_date", d.toISOString()); break; }
+      case "gt_90d": { const d = new Date(today); d.setDate(d.getDate() - 90); query = query.lte("incorporation_date", d.toISOString()); break; }
+      case "gt_1y": { const d = new Date(today); d.setFullYear(d.getFullYear() - 1); query = query.lte("incorporation_date", d.toISOString()); break; }
+      case "lt_30d": { const d = new Date(today); d.setDate(d.getDate() - 30); query = query.gte("incorporation_date", d.toISOString()); break; }
     }
   } else if (max_age_days !== null) {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - max_age_days);
-    if (max_age_days === 365) {
-      // 1+ years logic override
-      query = query.lte("incorporation_date", cutoffDate.toISOString());
-    } else {
-      query = query.gte("incorporation_date", cutoffDate.toISOString());
-    }
+    query = max_age_days === 365
+      ? query.lte("incorporation_date", cutoffDate.toISOString())
+      : query.gte("incorporation_date", cutoffDate.toISOString());
   }
+
+  // Individual crime minimum filters
+  if (min_crime_burglary && min_crime_burglary > 0) query = query.gte("crime_burglary_count", min_crime_burglary);
+  if (min_crime_robbery && min_crime_robbery > 0) query = query.gte("crime_robbery_count", min_crime_robbery);
+  if (min_crime_vehicle && min_crime_vehicle > 0) query = query.gte("crime_vehicle_count", min_crime_vehicle);
+  if (min_crime_theft_person && min_crime_theft_person > 0) query = query.gte("crime_theft_person_count", min_crime_theft_person);
+  if (min_crime_other_theft && min_crime_other_theft > 0) query = query.gte("crime_other_theft_count", min_crime_other_theft);
+  if (min_crime_arson && min_crime_arson > 0) query = query.gte("crime_arson_count", min_crime_arson);
+  if (min_crime_shoplifting && min_crime_shoplifting > 0) query = query.gte("crime_shoplifting_count", min_crime_shoplifting);
+  if (min_crime_asb && min_crime_asb > 0) query = query.gte("crime_asb_count", min_crime_asb);
+  if (min_crime_violent && min_crime_violent > 0) query = query.gte("crime_violent_count", min_crime_violent);
 
   // Sectors & Crime Risks (mapped to risk_profile_tag)
   const risk_tags = searchParams.get("risk_tags");
