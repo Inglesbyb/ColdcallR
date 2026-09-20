@@ -34,8 +34,8 @@ export async function getNearbyCrimeCount(
   let totalCount = 0;
 
   // Query one month at a time (API limit: one date param per request)
-  for (const month of months.slice(0, 6)) {
-    // Last 6 months to avoid rate limits during seeding
+  for (const month of months.slice(0, 12)) {
+    // Lookback 12 months
     try {
       const params = new URLSearchParams({ poly, date: month });
       const res = await fetch(
@@ -74,8 +74,8 @@ export async function getCrimeCountAtLocation(
     const months = getLast12Months();
     let count = 0;
 
-    // Only query last 3 months during seeding for speed
-    for (const month of months.slice(0, 3)) {
+    // Query full 12 months for comprehensive data
+    for (const month of months.slice(0, 12)) {
       const params = new URLSearchParams({
         lat: String(lat),
         lng: String(lng),
