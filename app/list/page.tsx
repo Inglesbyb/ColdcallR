@@ -7,28 +7,15 @@ import { FilterDrawer } from "@/components/FilterDrawer";
 import { LeadCard } from "@/components/leads/LeadCard";
 import { LeadDrawer } from "@/components/leads/LeadDrawer";
 import {
-  Search, SlidersHorizontal, Map as MapIcon, Loader2, SearchX,
+  Search, SlidersHorizontal, CalendarDays, Loader2, SearchX,
   Flame, AlertTriangle, Sparkles, Eye, X, LogOut
 } from "lucide-react";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { Lead, LeadFilter } from "@/lib/types";
 import { useDebounce } from "@/lib/hooks/useDebounce";
+import { cn } from "@/lib/utils";
+import { useRouteStore } from "@/store/routeStore";
 
-// ─── Session storage helpers for tagged leads ───────────────
-const TAGGED_KEY = "coldcallr_tagged_leads";
-
-function getTaggedFromStorage(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const raw = sessionStorage.getItem(TAGGED_KEY);
-    return raw ? new Set(JSON.parse(raw)) : new Set();
-  } catch { return new Set(); }
-}
-
-function saveTaggedToStorage(ids: Set<string>) {
-  if (typeof window === "undefined") return;
-  sessionStorage.setItem(TAGGED_KEY, JSON.stringify([...ids]));
-}
 
 // ─── Quick filter chips config ──────────────────────────────
 const QUICK_FILTERS = [
@@ -48,6 +35,7 @@ export default function ListPage() {
   const [totalCount, setTotalCount] = useState(0);
   const LIMIT = 25;
 
+
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -60,38 +48,33 @@ export default function ListPage() {
   // Quick filter state
   const [activeQuickFilters, setActiveQuickFilters] = useState<Set<string>>(new Set());
 
-  // Tagged leads for map
-  const [taggedIds, setTaggedIds] = useState<Set<string>>(new Set());
+  // ─── Route store (unified tagging) ────────────────────────
+  const { addToRoute, removeFromRoute, isInRoute, clearRoute, items } = useRouteStore();
 
-  // Load tagged leads from session on mount
-  useEffect(() => {
-    setTaggedIds(getTaggedFromStorage());
-  }, []);
+  // Derive tagged IDs from store for display (commercial items only)
+  const taggedIds = new Set(
+    items.filter(i => i.type === "commercial").map(i => (i as any).id)
+  );
 
   // ─── Toggle tag ─────────────────────────────────────────────
   const toggleTag = useCallback((lead: Lead) => {
-    setTaggedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(lead.id)) next.delete(lead.id);
-      else next.add(lead.id);
-      saveTaggedToStorage(next);
-      return next;
-    });
-  }, []);
+    if (isInRoute(lead.id)) {
+      removeFromRoute(lead.id);
+    } else {
+      addToRoute(lead.id);
+    }
+  }, [isInRoute, addToRoute, removeFromRoute]);
 
   const clearTags = useCallback(() => {
-    setTaggedIds(new Set());
-    saveTaggedToStorage(new Set());
-  }, []);
+    // Only clear commercial items, leave residential intact
+    items
+      .filter(i => i.type === "commercial")
+      .forEach(i => removeFromRoute((i as any).id));
+  }, [items, removeFromRoute]);
 
   const tagAllVisible = useCallback(() => {
-    setTaggedIds(prev => {
-      const next = new Set(prev);
-      leads.forEach(l => next.add(l.id));
-      saveTaggedToStorage(next);
-      return next;
-    });
-  }, [leads]);
+    leads.forEach(l => addToRoute(l.id));
+  }, [leads, addToRoute]);
 
   // ─── Quick filter toggle ──────────────────────────────────
   const toggleQuickFilter = useCallback((key: string) => {
@@ -265,7 +248,7 @@ export default function ListPage() {
             </h1>
             {!loading && (
               <p className="text-[11px] text-slate-500 font-medium">
-                {totalCount.toLocaleString()} leads
+                {totalCount.toLocaleString()} commercial
                 {taggedIds.size > 0 && (
                   <span className="text-[var(--color-accent)] ml-1">
                     · {taggedIds.size} tagged
@@ -398,9 +381,9 @@ export default function ListPage() {
             {totalCount === 0 && !searchTerm && activeQuickFilters.size === 0 && filter.visit_status === "all" ? (
               <button
                 onClick={() => router.push("/welcome")}
-                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-colors"
+                className="bg-[var(--color-accent)] text-white px-6 py-2.5 rounded-xl font-bold shadow-lg shadow-[var(--color-accent)]/20 active:scale-95 transition-transform"
               >
-                Setup Workspace
+                Set up area
               </button>
             ) : (
               <button
@@ -408,11 +391,10 @@ export default function ListPage() {
                   setSearchTerm("");
                   setFilter({ visit_status: "all" });
                   setActiveQuickFilters(new Set());
-                  router.replace("/list");
                 }}
-                className="bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white rounded-xl px-5 py-2.5 font-semibold text-sm transition-colors"
+                className="text-[var(--color-accent)] font-semibold text-sm hover:underline"
               >
-                Reset All Filters
+                Clear all filters
               </button>
             )}
           </div>
@@ -422,13 +404,12 @@ export default function ListPage() {
               <div key={lead.id} className="animate-fade-in-up" style={{ animationDelay: `${Math.min(i, 10) * 0.03}s` }}>
                 <LeadCard
                   lead={lead}
-                  onClick={handleLeadClick}
+                  onClick={() => handleLeadClick(lead)}
                   isTagged={taggedIds.has(lead.id)}
-                  onToggleTag={toggleTag}
+                  onToggleTag={() => toggleTag(lead)}
                 />
               </div>
             ))}
-
             {hasMore && (
               <button
                 onClick={loadMore}
@@ -446,20 +427,20 @@ export default function ListPage() {
         )}
       </div>
 
-      {/* ═══ FLOATING ACTION BAR — Plot Tagged on Map ═══ */}
+      {/* ═══ FLOATING ACTION BAR — View in Planner ═══ */}
       {taggedIds.size > 0 && (
         <div className="fixed bottom-[80px] left-0 right-0 px-4 z-[900] pointer-events-none flex justify-center animate-slide-in-bottom">
           <button
-            onClick={handlePlotOnMap}
+            onClick={() => router.push("/today")}
             className="pointer-events-auto shadow-2xl shadow-blue-900/30 bg-[var(--color-accent)] hover:bg-[var(--color-accent-hover)] text-white px-6 py-3.5 rounded-full font-bold flex items-center gap-2.5 transition-all active:scale-95 text-[15px]"
           >
-            <MapIcon className="w-5 h-5" />
-            Plot {taggedIds.size} on Map
+            <CalendarDays className="w-5 h-5" />
+            {taggedIds.size} in Planner
           </button>
         </div>
       )}
 
-      <BottomNav taggedCount={taggedIds.size} />
+      <BottomNav />
 
       <FilterDrawer
         open={filterDrawerOpen}

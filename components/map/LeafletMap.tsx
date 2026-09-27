@@ -23,6 +23,7 @@ interface LeafletMapProps {
 
 export default function LeafletMap({ filter }: LeafletMapProps) {
   const [allLeads, setAllLeads] = useState<Lead[]>([]);
+  const [crimeNews, setCrimeNews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -30,34 +31,44 @@ export default function LeafletMap({ filter }: LeafletMapProps) {
   const fetchLeads = useCallback(async (currentFilter: LeadFilter) => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
-      if (currentFilter.visit_status && currentFilter.visit_status !== "all") {
-        params.set("visit_status", currentFilter.visit_status);
-      }
-      if (currentFilter.unvisited_only) params.set("unvisited_only", "true");
-      
-      // New Drawer Filters
-      if (currentFilter.max_age_days !== null && currentFilter.max_age_days !== undefined) {
-        params.set("max_age_days", String(currentFilter.max_age_days));
-      }
-      if (currentFilter.min_burglaries !== undefined) {
-        params.set("min_burglaries", String(currentFilter.min_burglaries));
-      }
-      if (currentFilter.risk_tags && currentFilter.risk_tags.length > 0) {
-        params.set("risk_tags", currentFilter.risk_tags.join(","));
-      }
-      if (currentFilter.searchQuery) {
-        params.set("q", currentFilter.searchQuery);
-      }
-      
-      params.set("limit", "500");
+      const mode = currentFilter.mode || "commercial";
+      if (mode === "residential") {
+        const res = await fetch(`/api/crime-news`);
+        if (!res.ok) throw new Error("Failed to fetch crime news");
+        const data = await res.json();
+        setCrimeNews(data.articles ?? []);
+        setAllLeads([]); // Clear leads
+      } else {
+        const params = new URLSearchParams();
+        if (currentFilter.visit_status && currentFilter.visit_status !== "all") {
+          params.set("visit_status", currentFilter.visit_status);
+        }
+        if (currentFilter.unvisited_only) params.set("unvisited_only", "true");
+        
+        // New Drawer Filters
+        if (currentFilter.max_age_days !== null && currentFilter.max_age_days !== undefined) {
+          params.set("max_age_days", String(currentFilter.max_age_days));
+        }
+        if (currentFilter.min_burglaries !== undefined) {
+          params.set("min_burglaries", String(currentFilter.min_burglaries));
+        }
+        if (currentFilter.risk_tags && currentFilter.risk_tags.length > 0) {
+          params.set("risk_tags", currentFilter.risk_tags.join(","));
+        }
+        if (currentFilter.searchQuery) {
+          params.set("q", currentFilter.searchQuery);
+        }
+        
+        params.set("limit", "500");
 
-      const res = await fetch(`/api/leads?${params}`);
-      if (!res.ok) throw new Error("Failed to fetch leads");
-      const { leads: data } = await res.json();
-      setAllLeads(data ?? []);
+        const res = await fetch(`/api/leads?${params}`);
+        if (!res.ok) throw new Error("Failed to fetch leads");
+        const { leads: data } = await res.json();
+        setAllLeads(data ?? []);
+        setCrimeNews([]);
+      }
     } catch (err) {
-      console.error("Failed to load leads:", err);
+      console.error("Failed to load map data:", err);
     } finally {
       setLoading(false);
     }
@@ -157,6 +168,8 @@ export default function LeafletMap({ filter }: LeafletMapProps) {
 
       <MapInner
         leads={filteredLeads}
+        crimeNews={crimeNews}
+        mode={filter.mode || "commercial"}
         selectedLeadId={selectedLead?.id ?? null}
         selectedLead={selectedLead}
         drawerOpen={drawerOpen}

@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { MapPin, List } from "lucide-react";
+import { MapPin, Home, Building2, CalendarDays } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRouteStore } from "@/store/routeStore";
 
 const NAV_ITEMS = [
-  { href: "/list",  label: "Leads", icon: List,    aliases: ["/"] },
-  { href: "/map",   label: "Map",   icon: MapPin,  aliases: [] },
+  { href: "/list",        label: "Commercial",  icon: Building2,   aliases: ["/"] },
+  { href: "/residential", label: "Residential", icon: Home,        aliases: [] },
+  { href: "/map",         label: "Map",         icon: MapPin,      aliases: [] },
+  { href: "/today",       label: "Planner",     icon: CalendarDays, aliases: [] },
 ] as const;
 
 interface BottomNavProps {
@@ -16,6 +19,8 @@ interface BottomNavProps {
 
 export function BottomNav({ taggedCount = 0 }: BottomNavProps) {
   const pathname = usePathname();
+  const { items } = useRouteStore();
+  const plannerCount = items.length;
 
   return (
     <nav
@@ -30,16 +35,18 @@ export function BottomNav({ taggedCount = 0 }: BottomNavProps) {
             pathname.startsWith(href + "/") ||
             aliases.includes(pathname as never);
 
-          const showBadge = href === "/map" && taggedCount > 0;
+          const showBadge =
+            (href === "/map" && taggedCount > 0) ||
+            (href === "/today" && plannerCount > 0);
 
           return (
             <Link
               key={href}
               href={href}
               className={cn(
-                "relative flex flex-col items-center gap-1 px-6 py-2 rounded-2xl transition-all duration-200",
+                "relative flex flex-col items-center justify-center flex-1 h-full py-1 rounded-xl transition-all duration-200 touch-target",
                 "focus:outline-none focus:ring-2 focus:ring-blue-500/50",
-                "active:scale-90",
+                "active:scale-95",
                 isActive
                   ? "text-[var(--color-accent)]"
                   : "text-slate-500 hover:text-slate-300"
@@ -55,7 +62,7 @@ export function BottomNav({ taggedCount = 0 }: BottomNavProps) {
                 />
                 {showBadge && (
                   <span className="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] px-1 bg-[var(--color-accent)] rounded-full text-[10px] font-bold text-white flex items-center justify-center border-2 border-[var(--color-bg-base)] animate-scale-in">
-                    {taggedCount}
+                    {href === "/today" ? plannerCount : taggedCount}
                   </span>
                 )}
               </div>

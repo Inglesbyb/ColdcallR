@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -30,6 +30,9 @@ const TILE_ATTRIBUTION =
 
 interface MapInnerProps {
   leads: Lead[];
+  crimeNews?: any[];
+  resRoute?: {lat: number, lng: number, title: string}[];
+  mode?: "commercial" | "residential";
   selectedLeadId: string | null;
   selectedLead: Lead | null;
   drawerOpen: boolean;
@@ -39,7 +42,7 @@ interface MapInnerProps {
 }
 
 // Component to fly to selected marker
-function FlyToSelected({ lead }: { lead: Lead | null }) {
+function FlyToSelected({ lead, crimeNewsItem }: { lead?: Lead | null, crimeNewsItem?: any }) {
   const map = useMap();
   useEffect(() => {
     if (lead?.lat && lead?.lng) {
@@ -47,22 +50,27 @@ function FlyToSelected({ lead }: { lead: Lead | null }) {
       map.flyTo([lead.lat - 0.003, lead.lng], Math.max(map.getZoom(), 15), {
         duration: 0.5,
       });
+    } else if (crimeNewsItem?.lat && crimeNewsItem?.lng) {
+      map.flyTo([crimeNewsItem.lat - 0.003, crimeNewsItem.lng], Math.max(map.getZoom(), 15), {
+        duration: 0.5,
+      });
     }
-  }, [lead, map]);
+  }, [lead, crimeNewsItem, map]);
   return null;
 }
 
-// Component to fit map bounds to the loaded leads
-function FitBoundsToLeads({ leads }: { leads: Lead[] }) {
+// Component to fit map bounds to all loaded stops (leads + residential)
+function FitBoundsToStops({ leads, resRoute = [] }: { leads: Lead[]; resRoute?: { lat: number; lng: number }[] }) {
   const map = useMap();
   useEffect(() => {
-    if (leads.length === 0) return;
-    const validLeads = leads.filter(l => l.lat && l.lng);
-    if (validLeads.length === 0) return;
+    const validLeads = leads.filter(l => l.lat && l.lng).map(l => [l.lat!, l.lng!] as [number, number]);
+    const validRes = resRoute.filter(r => r.lat && r.lng).map(r => [r.lat, r.lng] as [number, number]);
+    const all = [...validLeads, ...validRes];
+    if (all.length === 0) return;
 
-    const bounds = L.latLngBounds(validLeads.map(l => [l.lat!, l.lng!]));
+    const bounds = L.latLngBounds(all);
     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
-  }, [leads, map]);
+  }, [leads, resRoute, map]);
   
   return null;
 }
@@ -100,6 +108,9 @@ function createClusterIcon(cluster: any) {
 
 export default function MapInner({
   leads,
+  crimeNews = [],
+  resRoute = [],
+  mode = "commercial",
   selectedLeadId,
   selectedLead,
   drawerOpen,
@@ -108,6 +119,11 @@ export default function MapInner({
   onDrawerClose,
 }: MapInnerProps) {
   const { isInRoute } = useRouteStore();
+
+  const handleCrimeNewsClick = (news: any) => {
+    // For now we just alert, or we could have a NewsDrawer
+    window.open(news.url, "_blank");
+  };
 
   return (
     <>
@@ -128,19 +144,19 @@ export default function MapInner({
         {/* Fly to selected lead */}
         <FlyToSelected lead={selectedLead} />
 
-        {/* Fit map to loaded leads */}
-        <FitBoundsToLeads leads={leads} />
+        {/* Fit map to loaded stops */}
+        <FitBoundsToStops leads={leads} resRoute={resRoute} />
 
         {/* Clustered markers */}
         <MarkerClusterGroup
-          key={`cluster-${leads.map(l => l.id).join('-').slice(0, 100)}-${leads.length}`}
+          key={`cluster-${mode}-${mode === 'commercial' ? leads.map(l => l.id).join('-').slice(0, 100) : crimeNews.map((n: any) => n.id).join('-').slice(0, 100)}`}
           chunkedLoading
           iconCreateFunction={createClusterIcon}
           maxClusterRadius={50}
           spiderfyOnMaxZoom
           showCoverageOnHover={false}
         >
-          {leads.map((lead) => {
+          {mode === "commercial" && leads.map((lead) => {
             if (!lead.lat || !lead.lng) return null;
             return (
               <Marker
@@ -150,12 +166,95 @@ export default function MapInner({
                 zIndexOffset={lead.id === selectedLeadId ? 1000 : (isInRoute(lead.id) ? 500 : (lead.lead_score >= 75 ? 100 : 0))}
                 eventHandlers={{
                   click: (e) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     L.DomEvent.stopPropagation(e as any);
                     onMarkerClick(lead);
                   },
                 }}
                 aria-label={`${lead.company_name} — score ${lead.lead_score}`}
               />
+            );
+          })}
+          
+            {mode === "residential" && crimeNews.map((news) => {
+            if (!news.lat || !news.lng) return null;
+            
+            // Create a simple pulsing siren icon for news
+            const sirenIcon = L.divIcon({
+              className: "bg-transparent",
+              html: `
+                <div class="relative w-8 h-8 flex items-center justify-center">
+                  <div class="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
+                  <div class="relative w-6 h-6 bg-red-600 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-[10px]">
+                    🚨
+                  </div>
+                </div>
+              `,
+              iconSize: [32, 32],
+              iconAnchor: [16, 16],
+            });
+
+            return (
+              <Marker
+                key={news.id || news.url}
+                position={[news.lat, news.lng]}
+                icon={sirenIcon}
+                zIndexOffset={1000}
+                eventHandlers={{
+                  click: (e) => {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    L.DomEvent.stopPropagation(e as any);
+                    handleCrimeNewsClick(news);
+                  },
+                }}
+              />
+            );
+          })}
+
+          {resRoute?.map((routeItem, idx) => {
+            if (!routeItem.lat || !routeItem.lng) return null;
+            
+            // Custom red hotspot marker
+            const hotspotIcon = L.divIcon({
+              className: "bg-transparent",
+              html: `
+                <div class="relative w-8 h-8 flex items-center justify-center">
+                  <div class="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-60"></div>
+                  <div class="relative w-6 h-6 bg-red-600 rounded-full border border-white shadow-[0_0_15px_rgba(255,0,0,0.8)] flex items-center justify-center text-white">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                </div>
+              `,
+              iconSize: [32, 32],
+              iconAnchor: [16, 16],
+            });
+
+            return (
+              <Marker
+                key={`route-hotspot-${idx}`}
+                position={[routeItem.lat, routeItem.lng]}
+                icon={hotspotIcon}
+                zIndexOffset={1000}
+              >
+                <Popup className="rounded-xl shadow-xl">
+                  <div className="p-1 min-w-[160px]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-blue-500">
+                      Residential Stop
+                    </span>
+                    <h4 className="text-sm font-bold text-slate-900 mt-0.5">
+                      {routeItem.title}
+                    </h4>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${routeItem.lat},${routeItem.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      Open in Google Maps &rarr;
+                    </a>
+                  </div>
+                </Popup>
+              </Marker>
             );
           })}
         </MarkerClusterGroup>

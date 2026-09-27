@@ -96,6 +96,7 @@ export interface LeadFilter {
   risk_tags?: string[];
   sort_by?: string;
   searchQuery?: string;
+  mode?: "commercial" | "residential"; // Global app mode
   
   // Individual crime minimum filters
   min_crime_burglary?: number;

@@ -56,6 +56,11 @@ export function TopBar({ filter, onFilterChange, onOpenFilterDrawer }: TopBarPro
       params.delete("visit_status");
     }
 
+    if ('mode' in update) {
+      if (!update.mode || update.mode === "commercial") params.delete("mode");
+      else params.set("mode", update.mode);
+    }
+
     router.replace(`${pathname}?${params.toString()}`);
   }, [searchParams, router, pathname]);
 
@@ -83,12 +88,42 @@ export function TopBar({ filter, onFilterChange, onOpenFilterDrawer }: TopBarPro
 
   const hasActiveFilters = filter.min_score !== undefined || filter.unvisited_only;
 
+  const currentMode = filter.mode || "commercial";
+
   return (
     <div
       className="fixed top-0 left-0 right-0 z-[999] bg-slate-950/90 backdrop-blur-xl border-b border-slate-800/80 px-3 py-3 pt-safe"
       role="search"
       aria-label="Lead filters"
     >
+      {/* Mode Toggle */}
+      <div className="flex bg-slate-800/80 p-1 rounded-xl mb-3 border border-slate-700/60">
+        <button
+          onClick={() => {
+            onFilterChange({ mode: "commercial" });
+            syncToUrl({ mode: "commercial" });
+          }}
+          className={cn(
+            "flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all",
+            currentMode === "commercial" ? "bg-slate-700 text-white shadow-sm" : "text-slate-400 hover:text-slate-300"
+          )}
+        >
+          Commercial
+        </button>
+        <button
+          onClick={() => {
+            onFilterChange({ mode: "residential" });
+            syncToUrl({ mode: "residential" });
+          }}
+          className={cn(
+            "flex-1 py-1.5 text-xs font-semibold rounded-lg transition-all",
+            currentMode === "residential" ? "bg-slate-700 text-white shadow-sm" : "text-slate-400 hover:text-slate-300"
+          )}
+        >
+          Residential
+        </button>
+      </div>
+
       {/* Search bar */}
       <div className="relative mb-2.5">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
