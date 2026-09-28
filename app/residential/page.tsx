@@ -27,6 +27,8 @@ const ResidentialMapInner = dynamic(() => import("@/components/residential/Resid
 export default function ResidentialPage() {
   const router = useRouter();
   const [activeView, setActiveView] = useState<"news" | "stats">("news");
+  // Start collapsed on mobile so news is immediately readable
+  const [mapCollapsed, setMapCollapsed] = useState(true);
   
   const [news, setNews] = useState<any[]>([]);
   const [loadingNews, setLoadingNews] = useState(true);
@@ -159,8 +161,12 @@ export default function ResidentialPage() {
         </div>
       </div>
 
-      {/* ═══ MAP SECTION (Top Half) ═══ */}
-      <div className="h-[45vh] shrink-0 border-b border-[var(--color-border)] relative">
+      {/* ═══ MAP SECTION (collapsible) ═══ */}
+      <div
+        className={`shrink-0 border-b border-[var(--color-border)] relative transition-all duration-300 ease-in-out ${
+          mapCollapsed ? "h-[28vh]" : "h-[38vh]"
+        }`}
+      >
         {activeView === "news" ? (
           <>
             <ResidentialMapInner 
@@ -258,8 +264,25 @@ export default function ResidentialPage() {
         )}
       </div>
 
-      {/* ═══ LIST SECTION (Bottom Half) ═══ */}
-      <div className="flex-1 overflow-y-auto pb-24 scrollbar-none bg-[#0B1015]">
+      {/* Drag handle pill — tap to toggle map size */}
+      <button
+        onClick={() => setMapCollapsed(c => !c)}
+        className="shrink-0 flex items-center justify-center py-3 bg-[#0B1015] w-full active:bg-slate-800/50 transition-colors"
+        aria-label={mapCollapsed ? "Expand map" : "Collapse map"}
+      >
+        <div className="w-12 h-1.5 rounded-full bg-slate-600" />
+      </button>
+
+      {/* ═══ LIST SECTION ═══ */}
+      <div
+        className="flex-1 overflow-y-auto pb-28 scrollbar-none bg-[#0B1015]"
+        onScroll={(e) => {
+          const el = e.currentTarget;
+          // Collapse map when scrolling down, expand when at top
+          if (el.scrollTop > 60 && !mapCollapsed) setMapCollapsed(true);
+          if (el.scrollTop < 10 && mapCollapsed) setMapCollapsed(false);
+        }}
+      >
         {activeView === "news" ? (
           <NewsRecommendations 
             news={news} 
